@@ -4,7 +4,7 @@ module mem(
     input MemWrite,
     input MemRead,
     input MemtoReg,
-
+    output [31:0] dout
 );
 
 
