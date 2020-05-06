@@ -12,7 +12,8 @@ always @(*) begin
         37:alu_control <= 1;
         39:alu_control <= 12;
         42:alu_control <= 7;
-        default:alu_control <= 15;           //²»´æÔÚ
+        default:alu_control <= 15;           //Â²Â»Â´Ã¦Ã”Ãš
+        end
     endcase
 end 
 
