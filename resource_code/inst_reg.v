@@ -1,4 +1,5 @@
-module inst_rom(                 //指令寄存器
+module inst_reg(                 //指令寄存器
+    input clk,
     input [31:0] inst_address,
     input ce,
     output reg [31:0] inst 

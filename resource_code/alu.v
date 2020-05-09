@@ -2,7 +2,7 @@ module alu(
     input [31:0] data_a.
     input [31:0] data_b,
     input ALUSrc,
-    input alu_control,
+    input [3:0] alu_control,
     output zero_sig,
     output [31:0] reg alu_result
 );
