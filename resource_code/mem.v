@@ -28,7 +28,7 @@ always @(posedge clk) begin
 end
 
 //决定哪个数据写回寄存器堆
-assign dout = (MemtoReg == 1'b1)?data_out:ALU_result;
+assign dout = (MemtoReg == 1'b1)?data_out:alu_result;
 
 
 endmodule 

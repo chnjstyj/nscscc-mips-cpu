@@ -1,7 +1,7 @@
 module top(
     input clk,
     input rst
-)
+);
 
 wire ce;
 wire [31:0] inst_address;
@@ -12,7 +12,7 @@ wire [4:0] rreg_b;
 wire [4:0] wreg;
 wire [31:0] imme_num;
 wire [5:0] func;
-wire [3:0] alu_control;
+wire [3:0] alu_control_sig;
 wire ALU_zerotag;
 
 //¿ØÖÆÐÅºÅ
@@ -20,7 +20,7 @@ wire RegDst;
 wire Branch;
 wire MemRead;
 wire MemtoReg;
-wire [1:0] ALUOp;
+wire [2:0] ALUOp;
 wire MemWrite;
 wire ALUSrc;
 wire RegWrite;
@@ -69,7 +69,7 @@ id id(
 alu_control alu_control(
     .func(func),
     .ALUOp(ALUOp),
-    .alu_control(alu_control)
+    .alu_control(alu_control_sig)
 );
 
 opcode_control opcode_control(
@@ -101,7 +101,7 @@ alu alu(
     .data_a(rdata_a),
     .data_b(rdata_b),
     .ALUSrc(ALUSrc),
-    .alu_control(alu_control),
+    .alu_control(alu_control_sig),
     .zero_sig(ALU_zerotag),
     .alu_result(alu_result)
 );
@@ -115,3 +115,5 @@ mem mem(
     .MemtoReg(MemtoReg),
     .dout(mem_rdata)
 );
+
+endmodule

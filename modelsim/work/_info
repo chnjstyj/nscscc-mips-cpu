@@ -1,0 +1,190 @@
+m255
+K4
+z2
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+dC:/Users/Tang/Desktop/Verilog/digitalcircuit/vote
+valu
+Z0 !s110 1589129304
+!i10b 1
+!s100 CL;05lS9OH_9VWDNFY@0Z0
+I85ngC5>TS7n61cEOk993G3
+Z1 VDg1SIo80bB@j0V0VzS_@n1
+Z2 dC:/Users/Tang/Desktop/cpu/modelsim
+w1589129301
+8C:/Users/Tang/Desktop/cpu/resource_code/alu.v
+FC:/Users/Tang/Desktop/cpu/resource_code/alu.v
+L0 1
+Z3 OL;L;10.4;61
+r1
+!s85 0
+31
+!s108 1589129304.761000
+!s107 C:/Users/Tang/Desktop/cpu/resource_code/alu.v|
+!s90 -reportprogress|300|-work|work|-vopt|-stats=none|C:/Users/Tang/Desktop/cpu/resource_code/alu.v|
+!i113 0
+Z4 o-work work -L mtiAvm -L mtiRnm -L mtiOvm -L mtiUvm -L mtiUPF -L infact
+valu_control
+R0
+!i10b 1
+!s100 3CNCDZ_=^]^WG98>kMm<V2
+Inn=Q3YSE9LPKnNVM_6^0E2
+R1
+R2
+w1589128840
+8C:/Users/Tang/Desktop/cpu/resource_code/alu_control.v
+FC:/Users/Tang/Desktop/cpu/resource_code/alu_control.v
+L0 1
+R3
+r1
+!s85 0
+31
+!s108 1589129304.843000
+!s107 C:/Users/Tang/Desktop/cpu/resource_code/alu_control.v|
+!s90 -reportprogress|300|-work|work|-vopt|-stats=none|C:/Users/Tang/Desktop/cpu/resource_code/alu_control.v|
+!i113 0
+R4
+vid
+Z5 !s110 1589129305
+!i10b 1
+!s100 U9@XN`H>CZ>3PTW=n7>nO2
+INlPAGeBEhBW4DadT4@A@g1
+R1
+R2
+w1589129071
+8C:/Users/Tang/Desktop/cpu/resource_code/id.v
+FC:/Users/Tang/Desktop/cpu/resource_code/id.v
+L0 1
+R3
+r1
+!s85 0
+31
+!s108 1589129305.271000
+!s107 C:/Users/Tang/Desktop/cpu/resource_code/id.v|
+!s90 -reportprogress|300|-work|work|-vopt|-stats=none|C:/Users/Tang/Desktop/cpu/resource_code/id.v|
+!i113 0
+R4
+vinst_reg
+R5
+!i10b 1
+!s100 e2o5:<RkfI8QDAfPBY3m32
+I;cg24k@JLm7idACIgPY`V1
+R1
+R2
+w1589027590
+8C:/Users/Tang/Desktop/cpu/resource_code/inst_reg.v
+FC:/Users/Tang/Desktop/cpu/resource_code/inst_reg.v
+L0 1
+R3
+r1
+!s85 0
+31
+!s108 1589129305.372000
+!s107 C:/Users/Tang/Desktop/cpu/resource_code/inst_reg.v|
+!s90 -reportprogress|300|-work|work|-vopt|-stats=none|C:/Users/Tang/Desktop/cpu/resource_code/inst_reg.v|
+!i113 0
+R4
+vmem
+R5
+!i10b 1
+!s100 :]Z5zD6UR]5nN6oBI;Ke23
+IO@hTVegG:E<j?n9bf6J^`1
+R1
+R2
+w1589128999
+8C:/Users/Tang/Desktop/cpu/resource_code/mem.v
+FC:/Users/Tang/Desktop/cpu/resource_code/mem.v
+L0 1
+R3
+r1
+!s85 0
+31
+!s108 1589129305.467000
+!s107 C:/Users/Tang/Desktop/cpu/resource_code/mem.v|
+!s90 -reportprogress|300|-work|work|-vopt|-stats=none|C:/Users/Tang/Desktop/cpu/resource_code/mem.v|
+!i113 0
+R4
+vopcode_control
+R5
+!i10b 1
+!s100 GLJM]LnGkj=b7GSc;@11b2
+IUGfLid=<7i9dV3mY1L8_O2
+R1
+R2
+w1589129160
+8C:/Users/Tang/Desktop/cpu/resource_code/opcode_control.v
+FC:/Users/Tang/Desktop/cpu/resource_code/opcode_control.v
+L0 1
+R3
+r1
+!s85 0
+31
+!s108 1589129305.561000
+!s107 C:/Users/Tang/Desktop/cpu/resource_code/opcode_control.v|
+!s90 -reportprogress|300|-work|work|-vopt|-stats=none|C:/Users/Tang/Desktop/cpu/resource_code/opcode_control.v|
+!i113 0
+R4
+vpc
+R5
+!i10b 1
+!s100 z^d`T@;zlIgP[A5I0T:mN2
+IWADgW2A;n2FYLhngYQDY03
+R1
+R2
+w1589129210
+8C:/Users/Tang/Desktop/cpu/resource_code/pc.v
+FC:/Users/Tang/Desktop/cpu/resource_code/pc.v
+L0 1
+R3
+r1
+!s85 0
+31
+!s108 1589129305.654000
+!s107 C:/Users/Tang/Desktop/cpu/resource_code/pc.v|
+!s90 -reportprogress|300|-work|work|-vopt|-stats=none|C:/Users/Tang/Desktop/cpu/resource_code/pc.v|
+!i113 0
+R4
+vregs
+R5
+!i10b 1
+!s100 oSi[X5XgMTM_S?K<@;og:0
+In=4A6=kn6IIj<1W<a2?Qe3
+R1
+R2
+w1589028354
+8C:/Users/Tang/Desktop/cpu/resource_code/regs.v
+FC:/Users/Tang/Desktop/cpu/resource_code/regs.v
+L0 4
+R3
+r1
+!s85 0
+31
+!s108 1589129305.748000
+!s107 C:/Users/Tang/Desktop/cpu/resource_code/regs.v|
+!s90 -reportprogress|300|-work|work|-vopt|-stats=none|C:/Users/Tang/Desktop/cpu/resource_code/regs.v|
+!i113 0
+R4
+vtop
+R5
+!i10b 1
+!s100 L1`Xc41]]AhezOZmTh@4T3
+I<ZTC_[zTg]]K[AN<3R6`n3
+R1
+R2
+w1589128936
+8C:/Users/Tang/Desktop/cpu/resource_code/top.v
+FC:/Users/Tang/Desktop/cpu/resource_code/top.v
+L0 1
+R3
+r1
+!s85 0
+31
+!s108 1589129305.843000
+!s107 C:/Users/Tang/Desktop/cpu/resource_code/top.v|
+!s90 -reportprogress|300|-work|work|-vopt|-stats=none|C:/Users/Tang/Desktop/cpu/resource_code/top.v|
+!i113 0
+R4

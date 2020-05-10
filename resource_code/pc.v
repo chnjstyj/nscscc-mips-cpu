@@ -6,7 +6,7 @@ module pc(
     input Jump,                    //无条件跳转信号 低电平有效
     input [31:0] imme,             //来自于id.v 的imme_num
     input [31:0] cur_inst,         //正在执行的指令
-    output [31:0] reg inst_address,
+    output reg [31:0] inst_address,
     output reg ce           
 );
 
@@ -29,7 +29,8 @@ always @(posedge clk) begin
     end
     else if (!Jump) begin 
         inst_address <= {next_inst_address[31:28],cur_inst[25:0],2'b00};
-end 
+    end 
+end
 
 always @(posedge clk) begin 
     if(rst == 1'b1) begin 

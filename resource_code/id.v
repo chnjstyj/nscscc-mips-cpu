@@ -16,6 +16,6 @@ assign rreg_b = inst[20:16];
 
 assign func = inst[5:0];
 assign wreg = (RegDst == 1'b0)?inst[20:16]:inst[15:11];
-assign imme_num ={16{inst[15]},inst[15:0]};       //符号扩展到32位
+assign imme_num = {{16{inst[15]}},inst[15:0]};       //符号扩展到32位
 
 endmodule
