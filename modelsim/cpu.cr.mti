@@ -12,21 +12,12 @@ Model Technology ModelSim SE-64 vlog 10.4 Compiler 2014.12 Dec  3 2014
 Top level modules:
 	id
 
-} {} {}} C:/Users/Tang/Desktop/cpu/resource_code/opcode_control.v {2 {vlog -work work -vopt -stats=none C:/Users/Tang/Desktop/cpu/resource_code/opcode_control.v
+} {} {}} C:/Users/Tang/Desktop/cpu/resource_code/opcode_control.v {1 {vlog -work work -vopt -stats=none C:/Users/Tang/Desktop/cpu/resource_code/opcode_control.v
 Model Technology ModelSim SE-64 vlog 10.4 Compiler 2014.12 Dec  3 2014
 -- Compiling module opcode_control
-** Warning: C:/Users/Tang/Desktop/cpu/resource_code/opcode_control.v(26): (vlog-2600) [RDGN] - Redundant digits in numeric literal.
-
 
 Top level modules:
 	opcode_control
-
-} {} {}} C:/Users/Tang/Desktop/cpu/resource_code/alu_control.v {1 {vlog -work work -vopt -stats=none C:/Users/Tang/Desktop/cpu/resource_code/alu_control.v
-Model Technology ModelSim SE-64 vlog 10.4 Compiler 2014.12 Dec  3 2014
--- Compiling module alu_control
-
-Top level modules:
-	alu_control
 
 } {} {}} C:/Users/Tang/Desktop/cpu/resource_code/alu.v {1 {vlog -work work -vopt -stats=none C:/Users/Tang/Desktop/cpu/resource_code/alu.v
 Model Technology ModelSim SE-64 vlog 10.4 Compiler 2014.12 Dec  3 2014
@@ -35,12 +26,26 @@ Model Technology ModelSim SE-64 vlog 10.4 Compiler 2014.12 Dec  3 2014
 Top level modules:
 	alu
 
+} {} {}} C:/Users/Tang/Desktop/cpu/resource_code/alu_control.v {1 {vlog -work work -vopt -stats=none C:/Users/Tang/Desktop/cpu/resource_code/alu_control.v
+Model Technology ModelSim SE-64 vlog 10.4 Compiler 2014.12 Dec  3 2014
+-- Compiling module alu_control
+
+Top level modules:
+	alu_control
+
 } {} {}} C:/Users/Tang/Desktop/cpu/resource_code/top.v {1 {vlog -work work -vopt -stats=none C:/Users/Tang/Desktop/cpu/resource_code/top.v
 Model Technology ModelSim SE-64 vlog 10.4 Compiler 2014.12 Dec  3 2014
 -- Compiling module top
 
 Top level modules:
 	top
+
+} {} {}} C:/Users/Tang/Desktop/cpu/resource_code/inst_reg.v {1 {vlog -work work -vopt -stats=none C:/Users/Tang/Desktop/cpu/resource_code/inst_reg.v
+Model Technology ModelSim SE-64 vlog 10.4 Compiler 2014.12 Dec  3 2014
+-- Compiling module inst_reg
+
+Top level modules:
+	inst_reg
 
 } {} {}} C:/Users/Tang/Desktop/cpu/resource_code/pc.v {1 {vlog -work work -vopt -stats=none C:/Users/Tang/Desktop/cpu/resource_code/pc.v
 Model Technology ModelSim SE-64 vlog 10.4 Compiler 2014.12 Dec  3 2014
@@ -56,11 +61,11 @@ Model Technology ModelSim SE-64 vlog 10.4 Compiler 2014.12 Dec  3 2014
 Top level modules:
 	mem
 
-} {} {}} C:/Users/Tang/Desktop/cpu/resource_code/inst_reg.v {1 {vlog -work work -vopt -stats=none C:/Users/Tang/Desktop/cpu/resource_code/inst_reg.v
+} {} {}} C:/Users/Tang/Desktop/cpu/resource_code/top_tb.v {1 {vlog -work work -vopt -stats=none {C:\Users\Tang\Desktop\cpu\resource_code\top_tb.v}
 Model Technology ModelSim SE-64 vlog 10.4 Compiler 2014.12 Dec  3 2014
--- Compiling module inst_reg
+-- Compiling module top_tb
 
 Top level modules:
-	inst_reg
+	top_tb
 
 } {} {}}

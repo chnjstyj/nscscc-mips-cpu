@@ -7,7 +7,7 @@ module inst_reg(                 //指令寄存器
 
 reg [31:0] inst_reg[0:1023];      //4kb的reg
 
-initial $readmemh ( "inst_reg.bin", inst_reg );
+initial $readmemh( "F:\inst_reg.data", inst_reg );
 
 always @(*) begin 
     if(ce == 1'b0) begin

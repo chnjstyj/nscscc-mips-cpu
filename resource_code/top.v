@@ -100,6 +100,7 @@ regs regs(
 alu alu(
     .data_a(rdata_a),
     .data_b(rdata_b),
+    .imme(imme_num),
     .ALUSrc(ALUSrc),
     .alu_control(alu_control_sig),
     .zero_sig(ALU_zerotag),

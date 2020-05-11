@@ -10,7 +10,7 @@ module id(
     
 );
 
-assign opcode = inst[31:25];
+assign opcode = inst[31:26];
 assign rreg_a = inst[25:21];
 assign rreg_b = inst[20:16];
 

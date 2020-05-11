@@ -23,7 +23,7 @@ always @(*) begin
        6'b101011: control_sig <= 11'b11110010000;       //sw
        6'b000100: control_sig <= 11'b10000001001;       //beq
        6'b000010: control_sig <= 11'b00000000000;       //jmp
-       6'h001101: control_sig <= 11'b10101000011;       //ori
+       6'b001101: control_sig <= 11'b10101000011;       //ori
        default: control_sig <= 11'b10000000000;
    endcase 
 end

@@ -33,7 +33,7 @@ always @(posedge clk) begin
 end
 
 always @(posedge clk) begin 
-    if(rst == 1'b1) begin 
+    if(rst == 1'b0) begin 
         ce <= 1'b0;
     end 
     else begin 
