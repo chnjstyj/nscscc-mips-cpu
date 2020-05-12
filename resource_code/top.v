@@ -25,7 +25,11 @@ wire MemWrite;
 wire ALUSrc;
 wire RegWrite;
 wire Jump;                    //低电平有效
-wire unsigned_num;
+wire unsigned_num;           //暂时不用
+wire equal_branch;
+wire store_pc;
+wire jmp_reg;                //jr 信号线
+wire lui_sig;
 
 //寄存器堆读出数据
 wire [31:0] rdata_a;
@@ -49,7 +53,9 @@ pc pc(
     .imme(imme_num),
     .cur_inst(cur_inst),
     .inst_address(inst_address),
-    .ce(ce)
+    .ce(ce),
+    .jmp_reg(jmp_reg),
+    .Rrs(rdata_a)
 );
 
 inst_reg inst_reg(
@@ -74,7 +80,8 @@ alu_control alu_control(
     .func(func),
     .ALUOp(ALUOp),
     .opcode(opcode),
-    .alu_control(alu_control_sig)
+    .alu_control(alu_control_sig),
+    .jmp_reg(jmp_reg)
 );
 
 opcode_control opcode_control(
@@ -87,7 +94,10 @@ opcode_control opcode_control(
     .MemWrite(MemWrite),
     .ALUSrc(ALUSrc),
     .RegWrite(RegWrite),
-    .Jump(Jump)
+    .Jump(Jump),
+    .equal_branch(equal_branch),
+    .store_pc(store_pc),
+    .lui_sig(lui_sig)
 );
 
 regs regs(
@@ -99,7 +109,9 @@ regs regs(
     .wdata(mem_rdata),
     .RegWrite(RegWrite),
     .rdata_a(rdata_a),
-    .rdata_b(rdata_b)
+    .rdata_b(rdata_b),
+    .inst_address(inst_address),
+    .store_pc(store_pc)
 );
 
 alu alu(
@@ -110,7 +122,8 @@ alu alu(
     .alu_control(alu_control_sig),
     .zero_sig(ALU_zerotag),
     .alu_result(alu_result),
-    .unsigned_num(unsigned_num)
+    .unsigned_num(unsigned_num),
+    .equal_branch(equal_branch)
 );
 
 pre_mem pre_mem(
@@ -126,7 +139,9 @@ mem mem(
     .MemRead(MemRead),
     .MemtoReg(MemtoReg),
     .dout(mem_rdata),
-    .mem_sel(mem_sel)
+    .mem_sel(mem_sel),
+    .lui_sig(lui_sig),
+    .imme(imme_num)            //来自id阶段的立即数
 );
 
 endmodule

@@ -17,13 +17,13 @@ end
 
 always @(*) begin
     forever begin
-        #10; clk = ~clk;
+        #2; clk = ~clk;
     end
 end
 
 initial begin  
     rst = 0;
-    #100;
+    #10;
     rst = 1;
     #10000;
     rst = 0;

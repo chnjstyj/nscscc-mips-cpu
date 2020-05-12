@@ -9,6 +9,8 @@ module regs(
     input [4:0] wreg,
     input [31:0] wdata,        //写入寄存器的数据
     input RegWrite,            //寄存器写控制信号
+    input [31:0] inst_address,       //jal 指令用
+    input store_pc,                  //jal指令用信号
     output reg [31:0] rdata_a,
     output reg [31:0] rdata_b
 );
@@ -52,6 +54,14 @@ always @(*) begin
     end
 end
 
+always @(posedge clk) begin 
+    if (store_pc) begin
+        regs[31] <= inst_address + 3'd8;            //pc+8
+    end
+    else begin 
+        regs[31] <= regs[31];
+    end 
+end
 
 
 endmodule
