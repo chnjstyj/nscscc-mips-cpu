@@ -4,6 +4,7 @@ module alu(
     input [31:0] imme,
     input ALUSrc,
     input [3:0] alu_control,
+    input unsigned_num,
     output zero_sig,
     output reg [31:0] alu_result
 );
@@ -17,7 +18,7 @@ always @(alu_control or data_a or data_b) begin
         4'b0000:alu_result <= data_a & real_data_b;
         4'b0001:alu_result <= data_a | real_data_b;
         4'b0111:alu_result <= data_a < real_data_b?1:0;
-        4'b1100:alu_result <= ~(data_a | real_data_b);        //Òì»ò
+        4'b1100:alu_result <= ~(data_a | real_data_b);        //??
         default:alu_result <= 32'h00000000;
     endcase
 end

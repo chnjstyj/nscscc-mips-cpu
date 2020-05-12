@@ -25,7 +25,7 @@ initial begin
     rst = 0;
     #100;
     rst = 1;
-    #1000;
+    #10000;
     rst = 0;
 end
 endmodule 

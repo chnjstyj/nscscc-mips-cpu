@@ -20,11 +20,12 @@ wire RegDst;
 wire Branch;
 wire MemRead;
 wire MemtoReg;
-wire [2:0] ALUOp;
+wire [3:0] ALUOp;
 wire MemWrite;
 wire ALUSrc;
 wire RegWrite;
 wire Jump;                    //低电平有效
+wire unsigned_num;
 
 //寄存器堆读出数据
 wire [31:0] rdata_a;
@@ -32,6 +33,9 @@ wire [31:0] rdata_b;
 
 //alu计算结果
 wire [31:0] alu_result;
+
+//储存器片选信号
+wire [1:0] mem_sel;
 
 //储存器读出数据
 wire [31:0] mem_rdata;
@@ -69,6 +73,7 @@ id id(
 alu_control alu_control(
     .func(func),
     .ALUOp(ALUOp),
+    .opcode(opcode),
     .alu_control(alu_control_sig)
 );
 
@@ -104,7 +109,13 @@ alu alu(
     .ALUSrc(ALUSrc),
     .alu_control(alu_control_sig),
     .zero_sig(ALU_zerotag),
-    .alu_result(alu_result)
+    .alu_result(alu_result),
+    .unsigned_num(unsigned_num)
+);
+
+pre_mem pre_mem(
+    .opcode(opcode),
+    .mem_sel(mem_sel)
 );
 
 mem mem(
@@ -114,7 +125,8 @@ mem mem(
     .MemWrite(MemWrite),
     .MemRead(MemRead),
     .MemtoReg(MemtoReg),
-    .dout(mem_rdata)
+    .dout(mem_rdata),
+    .mem_sel(mem_sel)
 );
 
 endmodule

@@ -1,18 +1,20 @@
 module alu_control(
     input [5:0] func,
-    input [2:0] ALUOp,
+    input [3:0] ALUOp,
+    input [5:0] opcode,
+    output reg unsigned_num,
     output reg [3:0]  alu_control
 );
 
 always @(*) begin 
     case(ALUOp) 
-        3'b000:alu_control <= 4'b0010;      //+
-        3'b001:alu_control <= 4'b0110;      //-
-        3'b011:alu_control <= 4'b0001;         //or
-        3'b100:alu_control <= 4'b0000;         //and
-        3'b101:alu_control <= 4'b0111;     //小于则置位
-        3'b110:alu_control <= 4'b1100;    //或非
-        3'b010: begin                     //R-type
+        4'b0000:alu_control <= 4'b0010;      //+
+        4'b0001:alu_control <= 4'b0110;      //-
+        4'b0011:alu_control <= 4'b0001;         //or
+        4'b0100:alu_control <= 4'b0000;         //and
+        4'b0101:alu_control <= 4'b0111;     //小于则置位
+        4'b0110:alu_control <= 4'b1100;    //或非
+        4'b0010: begin                     //R-type
             case(func) 
                 31:alu_control <= 2;
                 34:alu_control <= 6;
@@ -27,5 +29,21 @@ always @(*) begin
     endcase
 end 
 
+always @(*) begin   
+    case (opcode)
+        6'h9:unsigned_num <= 1'b1;
+        6'h24:unsigned_num <= 1'b1;
+        6'h25:unsigned_num <= 1'b1;
+        6'hb:unsigned_num <= 1'b1;
+        6'h0:begin
+            case (func) 
+                6'h21:unsigned_num <= 1'b1;
+                6'h2b:unsigned_num <= 1'b1;
+                6'h23:unsigned_num <= 1'b1;
+            endcase
+        end
+    default: unsigned_num <= 1'b0;
+    endcase
+end
 
 endmodule 
