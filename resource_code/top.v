@@ -14,6 +14,7 @@ wire [31:0] imme_num;
 wire [5:0] func;
 wire [3:0] alu_control_sig;
 wire ALU_zerotag;
+wire [4:0] shamt;
 
 //¿ØÖÆÐÅºÅ
 wire RegDst;
@@ -73,7 +74,8 @@ id id(
     .rreg_b(rreg_b),
     .wreg(wreg),
     .imme_num(imme_num),
-    .func(func)
+    .func(func),
+    .shamt(shamt)
 );
 
 alu_control alu_control(
@@ -123,7 +125,8 @@ alu alu(
     .zero_sig(ALU_zerotag),
     .alu_result(alu_result),
     .unsigned_num(unsigned_num),
-    .equal_branch(equal_branch)
+    .equal_branch(equal_branch),
+    .shamt(shamt)
 );
 
 pre_mem pre_mem(
