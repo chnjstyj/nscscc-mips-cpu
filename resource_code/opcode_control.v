@@ -1,17 +1,17 @@
 module opcode_control(
     input [5:0] opcode,
-    output RegDst,
-    output Branch,
-    output MemRead,
-    output MemtoReg,
-    output [3:0] ALUOp,
-    output MemWrite,
-    output ALUSrc,
-    output RegWrite,
-    output Jump,                    //低电平有效
-    output equal_branch,
-    output store_pc,                //连接到alu中
-    output lui_sig                  //lui指令信号,连接到mem中
+    output RegDst,          //regs
+    output Branch,          //if
+    output MemRead,         //mem
+    output MemtoReg,        //wb
+    output [3:0] ALUOp,     //ex
+    output MemWrite,        //mem
+    output ALUSrc,          //ex
+    output RegWrite,        //wb
+    output Jump,            //if        //低电平有效
+    output equal_branch,    //ex
+    output store_pc,        //ex        //连接到reg中
+    output lui_sig          //mem       //lui指令信号,连接到mem中
 );
 
 reg [12:0] control_sig;

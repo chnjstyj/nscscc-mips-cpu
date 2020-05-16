@@ -1,4 +1,4 @@
-module mem(                   //使用大段模式
+    module mem(                   //使用小端模式
     input clk,
     input [31:0] alu_result,
     input [31:0] din,
@@ -8,6 +8,10 @@ module mem(                   //使用大段模式
     input MemtoReg,
     input [1:0] mem_sel,
     input lui_sig,
+    //input [4:0] mem_wreg,
+    //input mem_RegWrite,
+    //output reg wb_RegWrite,
+    //output reg [4:0] wb_wreg,
     output reg [31:0] dout
 );
 
@@ -16,7 +20,12 @@ reg [7:0] ram_b[0:1023];
 reg [7:0] ram_c[0:1023];
 reg [7:0] ram_d[0:1023];
 reg [31:0] data_out;
-
+/*
+always @(posedge clk) begin 
+    wb_wreg <= mem_wreg;
+    wb_RegWrite <= mem_RegWrite;
+end
+*/
 //读数据
 always @(*) begin
     if(MemRead) begin         //取低10位 因为log1024/log2 = 10  
