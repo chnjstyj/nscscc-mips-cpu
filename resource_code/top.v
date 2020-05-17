@@ -52,6 +52,10 @@ wire [31:0] mem_wdata;
 /*wire [4:0] wb_wreg;
 wire wb_RegWrite;*/
 
+//旁路相关连线
+wire control_rdata_a;
+wire control_rdata_b;
+
 //流水线相关模块与连线
 //if_id
 wire [31:0] id_inst;
@@ -234,9 +238,19 @@ regs regs(
     .store_pc(ex_store_pc)
 );
 
+pre_alu pre_alu(
+    .ex_rdata_a(ex_rdata_a),
+    .ex_rdata_b(ex_rdata_b),
+    .mem_wb_dout(mem_wdata),
+    .control_rdata_a(control_rdata_a),
+    .control_rdata_b(control_rdata_b),
+    .rdata_a(rdata_a),
+    .rdata_b(rdata_b)
+);
+
 alu alu(
-    .data_a(ex_rdata_a),
-    .data_b(ex_rdata_b),
+    .data_a(rdata_a),
+    .data_b(rdata_b),
     .imme(ex_imme_num),
     .ALUSrc(ex_ALUSrc),
     .alu_control(alu_control_sig),
@@ -281,6 +295,15 @@ mem mem(
     //.wb_RegWrite(wb_RegWrite),
     //.wb_wreg(wb_wreg),
     .imme(mem_imme_num)            //来自id阶段的立即数
+);
+
+redirect redirect(
+    .ex_Rs(ex_rdata_a),
+    .ex_Rt(ex_rdata_b),
+    .mem_wb_wreg(mem_wreg),
+    .mem_wb_RegWrite(mem_RegWrite),
+    .control_rdata_a(control_rdata_a),
+    .control_rdata_b(control_rdata_b)
 );
 
 endmodule

@@ -12,14 +12,14 @@ module id_ex(
     input id_store_pc,
     input id_lui_sig,
     input [31:0] id_next_instaddress,
-    input [31:0] id_rdata_a,
-    input [31:0] id_rdata_b,
+    input [31:0] id_rdata_a,        //Rs
+    input [31:0] id_rdata_b,        //Rt
     input [31:0] id_imme_num,
     input [5:0] id_func,
     input [4:0] id_shamt,
     input [5:0] id_opcode,
     input [31:0] id_cur_instaddress,
-    input [4:0] id_wreg,
+    input [4:0] id_wreg,           //Rd
     output reg ex_Branch,
     output reg ex_MemRead,
     output reg ex_MemtoReg,

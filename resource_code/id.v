@@ -2,9 +2,9 @@ module id(
     input [31:0] inst,
     input RegDst,                 //来自控制信号的regdis
     output [5:0] opcode,
-    output [4:0] rreg_a,         //读寄存器1
-    output [4:0] rreg_b,         //读寄存器2
-    output [4:0] wreg,           //写寄存器
+    output [4:0] rreg_a,         //读寄存器1 Rs
+    output [4:0] rreg_b,         //读寄存器2 Rt
+    output [4:0] wreg,           //写寄存器 Rd
     output [31:0] imme_num,       //立即数
     output [5:0] func,           //指令func段 
     output [4:0] shamt
