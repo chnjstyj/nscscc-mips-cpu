@@ -41,6 +41,10 @@ wire [31:0] jc_instaddress;
 wire [31:0] rdata_a;
 wire [31:0] rdata_b;
 
+//alu输入
+wire [31:0] alu_rdata_a;
+wire [31:0] alu_rdata_b;
+
 //alu计算结果
 wire [31:0] alu_result;
 
@@ -92,7 +96,9 @@ wire [4:0] ex_shamt;
 wire [5:0] ex_opcode;
 wire [31:0] ex_cur_instaddress;
 wire [4:0] ex_wreg;
-
+wire [4:0] ex_Rs;
+wire [4:0] ex_Rt;
+ 
 id_ex id_ex(
     .clk(clk),
     .rst(rst),
@@ -115,6 +121,8 @@ id_ex id_ex(
     .id_opcode(opcode),
     .id_cur_instaddress(id_cur_instaddress),
     .id_wreg(wreg),
+    .id_Rs(rreg_a),
+    .id_Rt(rreg_b),
     .ex_Branch(ex_Branch),
     .ex_MemRead(ex_MemRead),
     .ex_MemtoReg(ex_MemtoReg),
@@ -133,7 +141,9 @@ id_ex id_ex(
     .ex_shamt(ex_shamt),
     .ex_opcode(ex_opcode),
     .ex_cur_instaddress(ex_cur_instaddress),
-    .ex_wreg(ex_wreg)
+    .ex_wreg(ex_wreg),
+    .ex_Rs(ex_Rs),
+    .ex_Rt(ex_Rt)
 );
 
 //ex_mem
@@ -204,8 +214,8 @@ id id(
     .rreg_b(rreg_b),
     .wreg(wreg),
     .imme_num(imme_num),
-    .func(id_func),
-    .shamt(id_shamt)
+    .func(func),
+    .shamt(shamt)
 );
 
 opcode_control opcode_control(
@@ -244,13 +254,13 @@ pre_alu pre_alu(
     .mem_wb_dout(mem_wdata),
     .control_rdata_a(control_rdata_a),
     .control_rdata_b(control_rdata_b),
-    .rdata_a(rdata_a),
-    .rdata_b(rdata_b)
+    .rdata_a(alu_rdata_a),
+    .rdata_b(alu_rdata_b)
 );
 
 alu alu(
-    .data_a(rdata_a),
-    .data_b(rdata_b),
+    .data_a(alu_rdata_a),
+    .data_b(alu_rdata_b),
     .imme(ex_imme_num),
     .ALUSrc(ex_ALUSrc),
     .alu_control(alu_control_sig),
@@ -298,8 +308,8 @@ mem mem(
 );
 
 redirect redirect(
-    .ex_Rs(ex_rdata_a),
-    .ex_Rt(ex_rdata_b),
+    .ex_Rs(ex_Rs),
+    .ex_Rt(ex_Rt),
     .mem_wb_wreg(mem_wreg),
     .mem_wb_RegWrite(mem_RegWrite),
     .control_rdata_a(control_rdata_a),

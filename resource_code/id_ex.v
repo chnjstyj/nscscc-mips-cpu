@@ -12,14 +12,16 @@ module id_ex(
     input id_store_pc,
     input id_lui_sig,
     input [31:0] id_next_instaddress,
-    input [31:0] id_rdata_a,        //Rs
-    input [31:0] id_rdata_b,        //Rt
+    input [31:0] id_rdata_a,        //Rs读出数据
+    input [31:0] id_rdata_b,        //Rt读出数据
     input [31:0] id_imme_num,
     input [5:0] id_func,
     input [4:0] id_shamt,
     input [5:0] id_opcode,
     input [31:0] id_cur_instaddress,
     input [4:0] id_wreg,           //Rd
+    input [4:0] id_Rs,
+    input [4:0] id_Rt,
     output reg ex_Branch,
     output reg ex_MemRead,
     output reg ex_MemtoReg,
@@ -38,7 +40,9 @@ module id_ex(
     output reg [4:0] ex_shamt,
     output reg [5:0] ex_opcode,
     output reg [31:0] ex_cur_instaddress,
-    output reg [4:0] ex_wreg
+    output reg [4:0] ex_wreg,
+    output reg [4:0] ex_Rs,
+    output reg [4:0] ex_Rt
 );
 
 always @(posedge clk) begin 
@@ -62,6 +66,8 @@ always @(posedge clk) begin
             ex_opcode <= 6'b000000;
             ex_cur_instaddress <= 32'h00000000;
             ex_wreg <= 5'b00000;
+            ex_Rs <= 5'b00000;
+            ex_Rt <= 5'b00000;
         end 
         else begin 
             ex_Branch <= id_Branch;
@@ -83,6 +89,8 @@ always @(posedge clk) begin
             ex_opcode <= id_opcode;
             ex_cur_instaddress <= id_cur_instaddress;
             ex_wreg <= id_wreg;
+            ex_Rs <= id_Rs;
+            ex_Rt <= id_Rt;
         end 
 end
 

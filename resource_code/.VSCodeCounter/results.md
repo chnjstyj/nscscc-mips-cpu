@@ -1,22 +1,22 @@
 # Summary
 
-Date : 2020-05-13 00:23:26
+Date : 2020-05-18 18:30:39
 
 Directory c:\Users\Tang\Desktop\cpu\resource_code
 
-Total : 12 files,  493 codes, 20 comments, 74 blanks, all 587 lines
+Total : 18 files,  894 codes, 47 comments, 99 blanks, all 1040 lines
 
 [details](details.md)
 
 ## Languages
 | language | files | code | comment | blank | total |
 | :--- | ---: | ---: | ---: | ---: | ---: |
-| Verilog | 11 | 493 | 20 | 72 | 585 |
+| Verilog | 17 | 894 | 47 | 97 | 1,038 |
 | Markdown | 1 | 0 | 0 | 2 | 2 |
 
 ## Directories
 | path | files | code | comment | blank | total |
 | :--- | ---: | ---: | ---: | ---: | ---: |
-| . | 12 | 493 | 20 | 74 | 587 |
+| . | 18 | 894 | 47 | 99 | 1,040 |
 
 [details](details.md)

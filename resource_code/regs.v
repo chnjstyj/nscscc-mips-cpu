@@ -39,7 +39,10 @@ always @(*) begin
     if(rst == 1'b0) begin 
         rdata_a <= 32'h00000000;
     end 
-    else begin 
+    else if(rreg_a == wreg && RegWrite) begin       //数据直通
+        rdata_a <= wdata;
+    end
+    else begin
         rdata_a <= regs[rreg_a];
     end
 end
@@ -49,6 +52,9 @@ always @(*) begin
     if(rst == 1'b0) begin 
         rdata_b <= 32'h00000000;
     end 
+    else if(rreg_b == wreg && RegWrite) begin 
+        rdata_b <= wdata;
+    end
     else begin 
         rdata_b <= regs[rreg_b];
     end

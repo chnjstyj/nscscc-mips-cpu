@@ -1,12 +1,12 @@
-Date : 2020-05-13 00:23:26
+Date : 2020-05-18 18:30:39
 Directory : c:\Users\Tang\Desktop\cpu\resource_code
-Total : 12 files,  493 codes, 20 comments, 74 blanks, all 587 lines
+Total : 18 files,  894 codes, 47 comments, 99 blanks, all 1040 lines
 
 Languages
 +----------+------------+------------+------------+------------+------------+
 | language | files      | code       | comment    | blank      | total      |
 +----------+------------+------------+------------+------------+------------+
-| Verilog  |         11 |        493 |         20 |         72 |        585 |
+| Verilog  |         17 |        894 |         47 |         97 |      1,038 |
 | Markdown |          1 |          0 |          0 |          2 |          2 |
 +----------+------------+------------+------------+------------+------------+
 
@@ -14,7 +14,7 @@ Directories
 +----------------------------------------------------------+------------+------------+------------+------------+------------+
 | path                                                     | files      | code       | comment    | blank      | total      |
 +----------------------------------------------------------+------------+------------+------------+------------+------------+
-| .                                                        |         12 |        493 |         20 |         74 |        587 |
+| .                                                        |         18 |        894 |         47 |         99 |      1,040 |
 +----------------------------------------------------------+------------+------------+------------+------------+------------+
 
 Files
@@ -22,16 +22,22 @@ Files
 | filename                                                 | language | code       | comment    | blank      | total      |
 +----------------------------------------------------------+----------+------------+------------+------------+------------+
 | c:\Users\Tang\Desktop\cpu\resource_code\README.md        | Markdown |          0 |          0 |          2 |          2 |
-| c:\Users\Tang\Desktop\cpu\resource_code\alu.v            | Verilog  |         39 |          0 |          5 |         44 |
-| c:\Users\Tang\Desktop\cpu\resource_code\alu_control.v    | Verilog  |         53 |          0 |          5 |         58 |
-| c:\Users\Tang\Desktop\cpu\resource_code\id.v             | Verilog  |         17 |          0 |          4 |         21 |
+| c:\Users\Tang\Desktop\cpu\resource_code\alu.v            | Verilog  |         58 |          1 |          7 |         66 |
+| c:\Users\Tang\Desktop\cpu\resource_code\alu_control.v    | Verilog  |         56 |          0 |          5 |         61 |
+| c:\Users\Tang\Desktop\cpu\resource_code\cal_address.v    | Verilog  |          7 |          0 |          2 |          9 |
+| c:\Users\Tang\Desktop\cpu\resource_code\ex_mem.v         | Verilog  |         51 |          0 |          1 |         52 |
+| c:\Users\Tang\Desktop\cpu\resource_code\id.v             | Verilog  |         19 |          0 |          2 |         21 |
+| c:\Users\Tang\Desktop\cpu\resource_code\id_ex.v          | Verilog  |         95 |          0 |          3 |         98 |
+| c:\Users\Tang\Desktop\cpu\resource_code\if_id.v          | Verilog  |         23 |          0 |          2 |         25 |
 | c:\Users\Tang\Desktop\cpu\resource_code\inst_reg.v       | Verilog  |         17 |          4 |          4 |         25 |
-| c:\Users\Tang\Desktop\cpu\resource_code\mem.v            | Verilog  |         66 |          4 |          6 |         76 |
-| c:\Users\Tang\Desktop\cpu\resource_code\opcode_control.v | Verilog  |         41 |          0 |          5 |         46 |
-| c:\Users\Tang\Desktop\cpu\resource_code\pc.v             | Verilog  |         43 |          0 |          7 |         50 |
+| c:\Users\Tang\Desktop\cpu\resource_code\mem.v            | Verilog  |         66 |         14 |          5 |         85 |
+| c:\Users\Tang\Desktop\cpu\resource_code\opcode_control.v | Verilog  |         44 |          0 |          5 |         49 |
+| c:\Users\Tang\Desktop\cpu\resource_code\pc.v             | Verilog  |         45 |          1 |          7 |         53 |
+| c:\Users\Tang\Desktop\cpu\resource_code\pre_alu.v        | Verilog  |         22 |          0 |          4 |         26 |
 | c:\Users\Tang\Desktop\cpu\resource_code\pre_mem.v        | Verilog  |         17 |          0 |          2 |         19 |
-| c:\Users\Tang\Desktop\cpu\resource_code\regs.v           | Verilog  |         50 |          6 |         12 |         68 |
-| c:\Users\Tang\Desktop\cpu\resource_code\top.v            | Verilog  |        126 |          5 |         16 |        147 |
+| c:\Users\Tang\Desktop\cpu\resource_code\redirect.v       | Verilog  |         21 |          1 |          3 |         25 |
+| c:\Users\Tang\Desktop\cpu\resource_code\regs.v           | Verilog  |         56 |          6 |         12 |         74 |
+| c:\Users\Tang\Desktop\cpu\resource_code\top.v            | Verilog  |        273 |         19 |         27 |        319 |
 | c:\Users\Tang\Desktop\cpu\resource_code\top_tb.v         | Verilog  |         24 |          1 |          6 |         31 |
-| Total                                                    |          |        493 |         20 |         74 |        587 |
+| Total                                                    |          |        894 |         47 |         99 |      1,040 |
 +----------------------------------------------------------+----------+------------+------------+------------+------------+

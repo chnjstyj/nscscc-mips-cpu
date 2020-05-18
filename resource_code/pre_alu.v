@@ -4,8 +4,8 @@ module pre_alu(
     input [31:0] mem_wb_dout,
     input control_rdata_a,
     input control_rdata_b,
-    output [31:0] rdata_a,
-    output [31:0] rdata_b
+    output reg [31:0] rdata_a,
+    output reg [31:0] rdata_b
 );
 
 always @(*) begin 
