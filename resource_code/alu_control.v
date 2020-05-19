@@ -3,7 +3,6 @@ module alu_control(
     input [3:0] ALUOp,
     input [5:0] opcode,
     output reg unsigned_num,
-    output reg jmp_reg,           //jr 信号，连接到pc
     output reg [3:0]  alu_control
 );
 
@@ -48,13 +47,6 @@ always @(*) begin
         end
     default: unsigned_num <= 1'b0;
     endcase
-end
-
-always @(*) begin 
-    if(opcode == 6'h0 && func == 6'h08)
-        jmp_reg <= 1'b1;
-    else 
-        jmp_reg <= 1'b0;
 end
 
 endmodule 

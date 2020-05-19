@@ -1,20 +1,20 @@
-"filename", "language", "Verilog", "Markdown", "comment", "blank", "total"
-"c:\Users\Tang\Desktop\cpu\resource_code\README.md", "Markdown", 0, 0, 0, 2, 2
-"c:\Users\Tang\Desktop\cpu\resource_code\alu.v", "Verilog", 58, 0, 1, 7, 66
-"c:\Users\Tang\Desktop\cpu\resource_code\alu_control.v", "Verilog", 56, 0, 0, 5, 61
-"c:\Users\Tang\Desktop\cpu\resource_code\cal_address.v", "Verilog", 7, 0, 0, 2, 9
-"c:\Users\Tang\Desktop\cpu\resource_code\ex_mem.v", "Verilog", 51, 0, 0, 1, 52
-"c:\Users\Tang\Desktop\cpu\resource_code\id.v", "Verilog", 19, 0, 0, 2, 21
-"c:\Users\Tang\Desktop\cpu\resource_code\id_ex.v", "Verilog", 95, 0, 0, 3, 98
-"c:\Users\Tang\Desktop\cpu\resource_code\if_id.v", "Verilog", 23, 0, 0, 2, 25
-"c:\Users\Tang\Desktop\cpu\resource_code\inst_reg.v", "Verilog", 17, 0, 4, 4, 25
-"c:\Users\Tang\Desktop\cpu\resource_code\mem.v", "Verilog", 66, 0, 14, 5, 85
-"c:\Users\Tang\Desktop\cpu\resource_code\opcode_control.v", "Verilog", 44, 0, 0, 5, 49
-"c:\Users\Tang\Desktop\cpu\resource_code\pc.v", "Verilog", 45, 0, 1, 7, 53
-"c:\Users\Tang\Desktop\cpu\resource_code\pre_alu.v", "Verilog", 22, 0, 0, 4, 26
-"c:\Users\Tang\Desktop\cpu\resource_code\pre_mem.v", "Verilog", 17, 0, 0, 2, 19
-"c:\Users\Tang\Desktop\cpu\resource_code\redirect.v", "Verilog", 21, 0, 1, 3, 25
-"c:\Users\Tang\Desktop\cpu\resource_code\regs.v", "Verilog", 56, 0, 6, 12, 74
-"c:\Users\Tang\Desktop\cpu\resource_code\top.v", "Verilog", 273, 0, 19, 27, 319
-"c:\Users\Tang\Desktop\cpu\resource_code\top_tb.v", "Verilog", 24, 0, 1, 6, 31
-"Total", "-", 894, 0, 47, 99, 1040
+filename," ""language"""," ""Verilog"""," ""Markdown"""," ""comment"""," ""blank"""," ""total"""
+c:\Users\Tang\Desktop\cpu\resource_code\README.md," ""Markdown""",0,0,0,2,2
+c:\Users\Tang\Desktop\cpu\resource_code\alu.v," ""Verilog""",58,0,1,7,66
+c:\Users\Tang\Desktop\cpu\resource_code\alu_control.v," ""Verilog""",56,0,0,5,61
+c:\Users\Tang\Desktop\cpu\resource_code\cal_address.v," ""Verilog""",7,0,0,2,9
+c:\Users\Tang\Desktop\cpu\resource_code\ex_mem.v," ""Verilog""",51,0,0,1,52
+c:\Users\Tang\Desktop\cpu\resource_code\id.v," ""Verilog""",19,0,0,2,21
+c:\Users\Tang\Desktop\cpu\resource_code\id_ex.v," ""Verilog""",95,0,0,3,98
+c:\Users\Tang\Desktop\cpu\resource_code\if_id.v," ""Verilog""",23,0,0,2,25
+c:\Users\Tang\Desktop\cpu\resource_code\inst_reg.v," ""Verilog""",17,0,4,4,25
+c:\Users\Tang\Desktop\cpu\resource_code\mem.v," ""Verilog""",66,0,14,5,85
+c:\Users\Tang\Desktop\cpu\resource_code\opcode_control.v," ""Verilog""",44,0,0,5,49
+c:\Users\Tang\Desktop\cpu\resource_code\pc.v," ""Verilog""",45,0,1,7,53
+c:\Users\Tang\Desktop\cpu\resource_code\pre_alu.v," ""Verilog""",22,0,0,4,26
+c:\Users\Tang\Desktop\cpu\resource_code\pre_mem.v," ""Verilog""",17,0,0,2,19
+c:\Users\Tang\Desktop\cpu\resource_code\redirect.v," ""Verilog""",21,0,1,3,25
+c:\Users\Tang\Desktop\cpu\resource_code\regs.v," ""Verilog""",56,0,6,12,74
+c:\Users\Tang\Desktop\cpu\resource_code\top.v," ""Verilog""",273,0,19,27,319
+c:\Users\Tang\Desktop\cpu\resource_code\top_tb.v," ""Verilog""",24,0,1,6,31
+Total," ""-""",894,0,47,99,1040

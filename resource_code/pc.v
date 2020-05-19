@@ -26,7 +26,7 @@ always @(posedge clk) begin
     if(ce == 1'b0) begin 
         inst_address <= 32'h00000000;
     end 
-    else if(!Ebranch&&Jump&&!jmp_reg) begin                  //不执行有条件跳转与无条件跳转
+    else if(!Ebranch&&Jump&&!jmp_reg) begin       //不执行有条件跳转与无条件跳转
         inst_address <= next_instaddress;
     end 
     else if(Ebranch&&Jump) begin                              //执行有条件跳转

@@ -6,6 +6,7 @@ module top(
 wire ce;
 wire [31:0] inst_address;
 wire [31:0] cur_inst;
+wire [31:0] next_instaddress;
 wire [5:0] opcode;
 wire [4:0] rreg_a;
 wire [4:0] rreg_b;
@@ -60,6 +61,18 @@ wire wb_RegWrite;*/
 wire control_rdata_a;
 wire control_rdata_b;
 
+//流水线气泡模块
+wire stall_if_id;
+wire stall_id_ex;
+wire stall_ex_memwb;
+stall stall(
+    .Jump(Jump),
+    .jmp_reg(jmp_reg),
+    .stall_if_id(stall_if_id),
+    .stall_id_ex(stall_id_ex),
+    .stall_ex_memwb(stall_ex_memwb)
+);
+
 //流水线相关模块与连线
 //if_id
 wire [31:0] id_inst;
@@ -71,6 +84,7 @@ if_id if_id(
     .if_inst(cur_inst),
     .if_next_instaddress(next_instaddress),
     .if_cur_instaddress(inst_address),
+    .stall_if_id(stall_if_id),
     .id_inst(id_inst),
     .id_next_instaddress(id_next_instaddress),
     .id_cur_instaddress(id_cur_instaddress)
@@ -84,7 +98,6 @@ wire [3:0] ex_ALUOp;
 wire ex_MemWrite;
 wire ex_ALUSrc;
 wire ex_RegWrite;
-wire ex_Jump;
 wire ex_equal_branch;
 wire ex_lui_sig;
 wire [31:0] ex_next_instaddress;
@@ -102,6 +115,7 @@ wire [4:0] ex_Rt;
 id_ex id_ex(
     .clk(clk),
     .rst(rst),
+    .stall_id_ex(stall_id_ex),
     .id_Branch(Branch),
     .id_MemRead(MemRead),
     .id_MemtoReg(MemtoReg),
@@ -192,10 +206,10 @@ pc pc(
     .jmp_reg(jmp_reg),
     .Rrs(ex_rdata_a),                
     .jc_instaddress(jc_instaddress),
-    .id_cur_inst(id_cur_inst),
+    .id_cur_inst(id_inst),
     .id_next_instaddress(id_next_instaddress),
     .inst_address(inst_address),
-    .next_instaddress(if_next_instaddress),
+    .next_instaddress(next_instaddress),
     .ce(ce)
 );
 
@@ -215,7 +229,8 @@ id id(
     .wreg(wreg),
     .imme_num(imme_num),
     .func(func),
-    .shamt(shamt)
+    .shamt(shamt),
+    .jmp_reg
 );
 
 opcode_control opcode_control(
@@ -275,8 +290,7 @@ alu_control alu_control(
     .func(ex_func),
     .ALUOp(ex_ALUOp),
     .opcode(ex_opcode),
-    .alu_control(alu_control_sig),
-    .jmp_reg(jmp_reg)
+    .alu_control(alu_control_sig)
 );
 
 cal_address cal_address(
