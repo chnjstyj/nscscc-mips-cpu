@@ -40,7 +40,7 @@ always @(*) begin
        6'hf: control_sig <= 13'b1101111000000;            //lui
        6'ha: control_sig <= 13'b1101010000101;            //slti
        6'hb: control_sig <= 13'b1101010000101;            //sltiu
-       6'h7: control_sig <= 13'b0101000010001;            //bgtz
+       6'h7: control_sig <= 13'b1101000010001;            //bgtz
        default: control_sig <= 13'b1100000000000;
    endcase 
 end
