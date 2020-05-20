@@ -10,6 +10,7 @@ module pc(
     input [31:0] jc_instaddress,   //有条件跳转指令地址
     input [31:0] id_cur_inst,         //正在执行的指令
     input [31:0] id_next_instaddress,
+    input bgtz_sig,
     output reg [31:0] inst_address,
     output [31:0] next_instaddress,
     output reg ce           
@@ -26,11 +27,14 @@ always @(posedge clk) begin
     if(ce == 1'b0) begin 
         inst_address <= 32'h00000000;
     end 
-    else if(!Ebranch&&Jump&&!jmp_reg) begin       //不执行有条件跳转与无条件跳转
+    else if(!Ebranch&&Jump&&!jmp_reg&&!bgtz_sig) begin       //不执行有条件跳转与无条件跳转
         inst_address <= next_instaddress;
     end 
     else if(Ebranch&&Jump) begin                              //执行有条件跳转
         inst_address <= jc_instaddress;          
+    end
+    else if(bgtz_sig) begin 
+        inst_address <= jc_instaddress; 
     end
     else if(jmp_reg) begin 
         inst_address <= Rrs;

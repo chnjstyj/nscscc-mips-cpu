@@ -11,12 +11,13 @@ module opcode_control(
     output Jump,            //if        //低电平有效
     output equal_branch,    //ex
     output store_pc,        //ex        //连接到reg中
-    output lui_sig          //mem       //lui指令信号,连接到mem中
+    output lui_sig,          //mem       //lui指令信号,连接到mem中
+    output greater_than
 );
 
 reg [12:0] control_sig;
 
-assign {branch_satisfy,Jump,RegDst,ALUSrc,MemtoReg,RegWrite,MemRead,MemWrite,Branch,ALUOp} 
+assign {equal_branch,Jump,RegDst,ALUSrc,MemtoReg,RegWrite,MemRead,MemWrite,Branch,ALUOp} 
     = control_sig;
 
 always @(*) begin
@@ -38,11 +39,13 @@ always @(*) begin
        6'h25: control_sig <= 13'b1101111000000;           //lhu
        6'hf: control_sig <= 13'b1101111000000;            //lui
        6'ha: control_sig <= 13'b1101010000101;            //slti
-       6'hb: control_sig <= 13'b1101010000101;            ///sltiu
+       6'hb: control_sig <= 13'b1101010000101;            //sltiu
+       6'h7: control_sig <= 13'b0101000010001;            //bgtz
        default: control_sig <= 13'b1100000000000;
    endcase 
 end
 
+assign greater_than = (opcode == 6'h7)?1'b1:1'b0;
 assign store_pc = (opcode == 6'h3)?1'b1:1'b0;
 assign lui_sig = (opcode == 6'hf)?1'b1:1'b0;
 

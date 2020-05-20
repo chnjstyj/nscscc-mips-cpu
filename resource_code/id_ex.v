@@ -23,6 +23,7 @@
     input [4:0] id_wreg,           //Rd
     input [4:0] id_Rs,
     input [4:0] id_Rt,
+    input id_greater_than,
     output reg ex_Branch,
     output reg ex_MemRead,
     output reg ex_MemtoReg,
@@ -43,7 +44,8 @@
     output reg [31:0] ex_cur_instaddress,
     output reg [4:0] ex_wreg,
     output reg [4:0] ex_Rs,
-    output reg [4:0] ex_Rt
+    output reg [4:0] ex_Rt,
+    output reg ex_greater_than
 );
 
 always @(posedge clk) begin 
@@ -69,6 +71,7 @@ always @(posedge clk) begin
             ex_wreg <= 5'b00000;
             ex_Rs <= 5'b00000;
             ex_Rt <= 5'b00000;
+            ex_greater_than <= 1'b0;
         end 
         else begin 
             ex_Branch <= id_Branch;
@@ -92,6 +95,7 @@ always @(posedge clk) begin
             ex_wreg <= id_wreg;
             ex_Rs <= id_Rs;
             ex_Rt <= id_Rt;
+            ex_greater_than <= id_greater_than;
         end 
 end
 

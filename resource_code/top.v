@@ -16,6 +16,7 @@ wire [5:0] func;
 wire [3:0] alu_control_sig;
 wire ALU_zerotag;
 wire [4:0] shamt;
+wire bgtz_sig;
 
 //id阶段控制信号
 wire RegDst;
@@ -31,6 +32,7 @@ wire unsigned_num;           //暂时不用
 wire equal_branch;
 wire store_pc;
 wire lui_sig;
+wire greater_than;
 
 //ex阶段控制信号
 wire jmp_reg;                //jr 信号线
@@ -61,17 +63,10 @@ wire wb_RegWrite;*/
 wire control_rdata_a;
 wire control_rdata_b;
 
-//流水线气泡模块
+//流水线气泡模块连线
 wire stall_if_id;
 wire stall_id_ex;
 wire stall_ex_memwb;
-stall stall(
-    .Jump(Jump),
-    .jmp_reg(jmp_reg),
-    .stall_if_id(stall_if_id),
-    .stall_id_ex(stall_id_ex),
-    .stall_ex_memwb(stall_ex_memwb)
-);
 
 //流水线相关模块与连线
 //if_id
@@ -111,6 +106,7 @@ wire [31:0] ex_cur_instaddress;
 wire [4:0] ex_wreg;
 wire [4:0] ex_Rs;
 wire [4:0] ex_Rt;
+wire ex_greater_than;
  
 id_ex id_ex(
     .clk(clk),
@@ -137,6 +133,7 @@ id_ex id_ex(
     .id_wreg(wreg),
     .id_Rs(rreg_a),
     .id_Rt(rreg_b),
+    .id_greater_than(greater_than),
     .ex_Branch(ex_Branch),
     .ex_MemRead(ex_MemRead),
     .ex_MemtoReg(ex_MemtoReg),
@@ -157,7 +154,8 @@ id_ex id_ex(
     .ex_cur_instaddress(ex_cur_instaddress),
     .ex_wreg(ex_wreg),
     .ex_Rs(ex_Rs),
-    .ex_Rt(ex_Rt)
+    .ex_Rt(ex_Rt),
+    .ex_greater_than(ex_greater_than)
 );
 
 //ex_mem
@@ -196,6 +194,18 @@ ex_mem ex_mem(
     .mem_wreg(mem_wreg)
 );
 
+//流水线气泡模块
+stall stall(
+    .Jump(Jump),
+    .jmp_reg(jmp_reg),
+    .ex_Branch(ex_Branch),
+    .zero_sig(ALU_zerotag),
+    .bgtz_sig(bgtz_sig),
+    .stall_if_id(stall_if_id),
+    .stall_id_ex(stall_id_ex),
+    .stall_ex_memwb(stall_ex_memwb)
+);
+
 pc pc(
     .clk(clk),
     .rst(rst),
@@ -210,6 +220,7 @@ pc pc(
     .id_next_instaddress(id_next_instaddress),
     .inst_address(inst_address),
     .next_instaddress(next_instaddress),
+    .bgtz_sig(bgtz_sig),
     .ce(ce)
 );
 
@@ -246,7 +257,8 @@ opcode_control opcode_control(
     .Jump(Jump),
     .equal_branch(equal_branch),
     .store_pc(store_pc),
-    .lui_sig(lui_sig)
+    .lui_sig(lui_sig),
+    .greater_than(greater_than)
 );
 
 regs regs(
@@ -283,7 +295,9 @@ alu alu(
     .alu_result(alu_result),
     .unsigned_num(unsigned_num),
     .equal_branch(ex_equal_branch),
-    .shamt(ex_shamt)
+    .shamt(ex_shamt),
+    .greater_than(ex_greater_than),
+    .bgtz_sig(bgtz_sig)
 );
 
 alu_control alu_control(

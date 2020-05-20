@@ -7,8 +7,10 @@ module alu(
     input unsigned_num,
     input equal_branch,
     input [4:0] shamt,
+    input greater_than,
     output reg zero_sig,
-    output reg [31:0] alu_result
+    output reg [31:0] alu_result,
+    output reg bgtz_sig                       //bgtz ???
 );
 
 wire [31:0] real_data_b;
@@ -61,6 +63,12 @@ always @(*) begin
         else
             zero_sig <= 1'b1;
     end 
+end
+
+always @(*) begin 
+    if (greater_than && alu_result[31] != 1'b1)
+        bgtz_sig <= 1'b1;
+    else bgtz_sig <= 1'b0;
 end
 
 endmodule
