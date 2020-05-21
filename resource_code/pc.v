@@ -11,6 +11,7 @@ module pc(
     input [31:0] id_cur_inst,         //正在执行的指令
     input [31:0] id_next_instaddress,
     input bgtz_sig,
+    input stall_pc,
     output reg [31:0] inst_address,
     output [31:0] next_instaddress,
     output reg ce           
@@ -27,6 +28,9 @@ always @(posedge clk) begin
     if(ce == 1'b0) begin 
         inst_address <= 32'h00000000;
     end 
+    else if (stall_pc == 1'b1) begin    
+        inst_address <= inst_address - 4'b0100;            //暂停取下一指令 
+    end
     else if(!Ebranch&&Jump&&!jmp_reg&&!bgtz_sig) begin       //不执行有条件跳转与无条件跳转
         inst_address <= next_instaddress;
     end 

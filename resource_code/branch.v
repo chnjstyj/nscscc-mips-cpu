@@ -10,7 +10,7 @@ module branch(
     output [31:0] jc_instaddress   //有条件跳转指令地址，连接到pc中
 );
 
-wire [31:0] sub_result;
+wire [31:0] xor_result;
 wire [31:0] zero_result;
 assign zero_result = rdata_a - 32'h00000000;
 assign xor_result = ~(rdata_a | rdata_b);

@@ -45,6 +45,10 @@ wire [31:0] jc_instaddress;
 wire [31:0] rdata_a;
 wire [31:0] rdata_b;
 
+//branch输入
+wire [31:0] pr_rdata_a;
+wire [31:0] pr_rdata_b;
+
 //alu输入
 wire [31:0] alu_rdata_a;
 wire [31:0] alu_rdata_b;
@@ -65,9 +69,11 @@ wire control_rdata_a;
 wire control_rdata_b;
 
 //流水线气泡模块连线
+wire flush_if_id;
+wire flush_id_ex;
+wire flush_ex_memwb;
+wire stall_pc;
 wire stall_if_id;
-wire stall_id_ex;
-wire stall_ex_memwb;
 
 //流水线相关模块与连线
 //if_id
@@ -77,10 +83,11 @@ wire [31:0] id_cur_instaddress;
 if_id if_id(
     .clk(clk),
     .rst(rst),
+    .stall_if_id(stall_if_id),
     .if_inst(cur_inst),
     .if_next_instaddress(next_instaddress),
     .if_cur_instaddress(inst_address),
-    .stall_if_id(stall_if_id),
+    .flush_if_id(flush_if_id),
     .id_inst(id_inst),
     .id_next_instaddress(id_next_instaddress),
     .id_cur_instaddress(id_cur_instaddress)
@@ -112,7 +119,7 @@ wire ex_greater_than;
 id_ex id_ex(
     .clk(clk),
     .rst(rst),
-    .stall_id_ex(stall_id_ex),
+    .flush_id_ex(flush_id_ex),
     //.id_Branch(Branch),
     .id_MemRead(MemRead),
     .id_MemtoReg(MemtoReg),
@@ -202,9 +209,12 @@ stall stall(
     .id_Branch(Branch),
     .zero_sig(zero_sig),
     .bgtz_sig(bgtz_sig),
-    .stall_if_id(stall_if_id),
-    .stall_id_ex(stall_id_ex),
-    .stall_ex_memwb(stall_ex_memwb)
+    .ex_RegWrite(ex_RegWrite),
+    .flush_if_id(flush_if_id),
+    .flush_id_ex(flush_id_ex),
+    .flush_ex_memwb(flush_ex_memwb),
+    .stall_pc(stall_pc),
+    .stall_if_id(stall_if_id)
 );
 
 pc pc(
@@ -222,6 +232,7 @@ pc pc(
     .inst_address(inst_address),
     .next_instaddress(next_instaddress),
     .bgtz_sig(bgtz_sig),
+    .stall_pc(stall_pc),
     .ce(ce)
 );
 
@@ -245,11 +256,21 @@ id id(
     .jmp_reg
 );
 
+pre_branch pre_branch(
+    .id_rdata_a(rdata_a),
+    .id_rdata_b(rdata_b),
+    .mem_wb_dout(mem_wdata),
+    .control_rdata_a(control_rdata_a),
+    .control_rdata_b(control_rdata_b),
+    .rdata_a(pr_rdata_a),
+    .rdata_b(pr_rdata_b)
+);
+
 branch branch(
     .next_instaddress(id_next_instaddress),          //来自id_ex
     .imme(imme_num),
-    .rdata_a(rdata_a),
-    .rdata_b(rdata_b),
+    .rdata_a(pr_rdata_a),
+    .rdata_b(pr_rdata_b),
     .greater_than(greater_than),
     .equal_branch(equal_branch),
     .bgtz_sig(bgtz_sig),

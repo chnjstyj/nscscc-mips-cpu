@@ -18,7 +18,7 @@ always @(*) begin
             case(func) 
                 0:alu_control <= 13;
                 2:alu_control <= 14;
-                31:alu_control <= 2;
+                32:alu_control <= 2;
                 34:alu_control <= 6;
                 36:alu_control <= 0;
                 37:alu_control <= 1;

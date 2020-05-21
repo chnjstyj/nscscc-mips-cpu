@@ -1,7 +1,7 @@
  module id_ex(
     input clk,
     input rst,
-    input stall_id_ex,
+    input flush_id_ex,
     //input id_Branch,
     input id_MemRead,
     input id_MemtoReg,
@@ -49,7 +49,7 @@
 );
 
 always @(posedge clk) begin 
-        if(rst == 1'b0 || stall_id_ex) begin 
+        if(rst == 1'b0 || flush_id_ex) begin 
             //ex_Branch <= 1'b0;
             ex_MemRead <= 1'b0;
             ex_MemtoReg <= 1'b0;
