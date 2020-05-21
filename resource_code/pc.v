@@ -2,7 +2,7 @@ module pc(
     input clk,
     input rst,
     input Branch,                  //有条件跳转信号
-    input ALU_zerotag,             //ALU零标志位
+    input zero_sig,             //ALU零标志位
     input Jump,                    //无条件跳转信号 低电平有效
     input [31:0] imme,             //来自于id.v 的imme_num
     input jmp_reg,                 //jr 信号
@@ -20,7 +20,7 @@ wire ifbranch;
 //wire [31:0] next_instaddress ;
 
 
-assign Ebranch = Branch && ALU_zerotag;
+assign Ebranch = Branch && zero_sig;
 assign next_instaddress = inst_address + 4'b0100;         //现指令地址+4
 
 always @(posedge clk) begin 

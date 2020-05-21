@@ -1,7 +1,7 @@
 module stall(
     input Jump,
     input jmp_reg,               
-    input ex_Branch,
+    input id_Branch,
     input zero_sig,
     input bgtz_sig,
     output reg stall_if_id,
@@ -15,13 +15,13 @@ always @(*) begin
 end
 
 always @(*) begin 
-    if((ex_Branch && zero_sig)||bgtz_sig) begin 
-        stall_if_id <= 1'b1;
-        stall_id_ex <= 1'b1;
+    if((id_Branch && zero_sig)||bgtz_sig) begin 
+        //stall_if_id <= 1'b1;
+        //stall_id_ex <= 1'b1;
     end 
     else begin
-        stall_if_id <= 1'b0;
-        stall_id_ex <= 1'b0; 
+        //stall_if_id <= 1'b0;
+        //stall_id_ex <= 1'b0; 
     end
 end
 

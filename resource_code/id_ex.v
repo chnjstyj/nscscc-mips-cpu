@@ -2,7 +2,7 @@
     input clk,
     input rst,
     input stall_id_ex,
-    input id_Branch,
+    //input id_Branch,
     input id_MemRead,
     input id_MemtoReg,
     input [3:0] id_ALUOp,
@@ -24,7 +24,7 @@
     input [4:0] id_Rs,
     input [4:0] id_Rt,
     input id_greater_than,
-    output reg ex_Branch,
+    //output reg ex_Branch,
     output reg ex_MemRead,
     output reg ex_MemtoReg,
     output reg [3:0] ex_ALUOp,
@@ -50,7 +50,7 @@
 
 always @(posedge clk) begin 
         if(rst == 1'b0 || stall_id_ex) begin 
-            ex_Branch <= 1'b0;
+            //ex_Branch <= 1'b0;
             ex_MemRead <= 1'b0;
             ex_MemtoReg <= 1'b0;
             ex_ALUOp <= 4'b0000;
@@ -74,7 +74,7 @@ always @(posedge clk) begin
             ex_greater_than <= 1'b0;
         end 
         else begin 
-            ex_Branch <= id_Branch;
+            //ex_Branch <= id_Branch;
             ex_MemRead <= id_MemRead;
             ex_MemtoReg <= id_MemtoReg;
             ex_ALUOp <= id_ALUOp;

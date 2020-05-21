@@ -33,6 +33,7 @@ wire equal_branch;
 wire store_pc;
 wire lui_sig;
 wire greater_than;
+wire zero_sig;
 
 //ex阶段控制信号
 wire jmp_reg;                //jr 信号线
@@ -112,7 +113,7 @@ id_ex id_ex(
     .clk(clk),
     .rst(rst),
     .stall_id_ex(stall_id_ex),
-    .id_Branch(Branch),
+    //.id_Branch(Branch),
     .id_MemRead(MemRead),
     .id_MemtoReg(MemtoReg),
     .id_ALUOp(ALUOp),
@@ -134,7 +135,7 @@ id_ex id_ex(
     .id_Rs(rreg_a),
     .id_Rt(rreg_b),
     .id_greater_than(greater_than),
-    .ex_Branch(ex_Branch),
+   // .ex_Branch(ex_Branch),
     .ex_MemRead(ex_MemRead),
     .ex_MemtoReg(ex_MemtoReg),
     .ex_ALUOp(ex_ALUOp),
@@ -198,8 +199,8 @@ ex_mem ex_mem(
 stall stall(
     .Jump(Jump),
     .jmp_reg(jmp_reg),
-    .ex_Branch(ex_Branch),
-    .zero_sig(ALU_zerotag),
+    .id_Branch(Branch),
+    .zero_sig(zero_sig),
     .bgtz_sig(bgtz_sig),
     .stall_if_id(stall_if_id),
     .stall_id_ex(stall_id_ex),
@@ -209,8 +210,8 @@ stall stall(
 pc pc(
     .clk(clk),
     .rst(rst),
-    .Branch(ex_Branch),
-    .ALU_zerotag(ALU_zerotag),
+    .Branch(Branch),
+    .zero_sig(zero_sig),
     .Jump(Jump),
     .imme(imme_num),
     .jmp_reg(jmp_reg),
@@ -242,6 +243,18 @@ id id(
     .func(func),
     .shamt(shamt),
     .jmp_reg
+);
+
+branch branch(
+    .next_instaddress(id_next_instaddress),          //来自id_ex
+    .imme(imme_num),
+    .rdata_a(rdata_a),
+    .rdata_b(rdata_b),
+    .greater_than(greater_than),
+    .equal_branch(equal_branch),
+    .bgtz_sig(bgtz_sig),
+    .zero_sig(zero_sig),
+    .jc_instaddress(jc_instaddress)
 );
 
 opcode_control opcode_control(
@@ -291,13 +304,13 @@ alu alu(
     .imme(ex_imme_num),
     .ALUSrc(ex_ALUSrc),
     .alu_control(alu_control_sig),
-    .zero_sig(ALU_zerotag),
+    //.zero_sig(ALU_zerotag),
     .alu_result(alu_result),
     .unsigned_num(unsigned_num),
     .equal_branch(ex_equal_branch),
-    .shamt(ex_shamt),
-    .greater_than(ex_greater_than),
-    .bgtz_sig(bgtz_sig)
+    .shamt(ex_shamt)
+    //.greater_than(ex_greater_than),
+    //.bgtz_sig(bgtz_sig)
 );
 
 alu_control alu_control(
@@ -305,12 +318,6 @@ alu_control alu_control(
     .ALUOp(ex_ALUOp),
     .opcode(ex_opcode),
     .alu_control(alu_control_sig)
-);
-
-cal_address cal_address(
-    .next_instaddress(ex_next_instaddress),          //来自id_ex
-    .imme(ex_imme_num),
-    .jc_instaddress(jc_instaddress)
 );
 
 pre_mem pre_mem(
