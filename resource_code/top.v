@@ -236,7 +236,7 @@ pc pc(
     .ce(ce)
 );
 
-inst_reg inst_reg(
+inst_rom inst_rom(
     .clk(clk),
     .inst_address(inst_address),
     .ce(ce),

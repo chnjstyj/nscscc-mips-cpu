@@ -1,13 +1,13 @@
-module inst_reg(                 //指令寄存器
+module inst_rom(                 //指令寄存器
     input clk,
     input [31:0] inst_address,
     input ce,
     output reg [31:0] inst 
 );
 
-reg [31:0] inst_reg[0:1023];      //4kb的reg
+reg [31:0] inst_rom[0:1023];      //4kb的reg
 
-initial $readmemh( "F:\inst_reg.data", inst_reg );
+initial $readmemh( "F:\inst_rom.data", inst_rom );
 
 always @(*) begin 
     if(ce == 1'b0) begin
