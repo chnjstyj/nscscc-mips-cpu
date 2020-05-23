@@ -6,3 +6,5 @@ resource_code/.VSCodeCounter/results.csv
 resource_code/.VSCodeCounter/results.md
 resource_code/.VSCodeCounter/results.txt
 resource_code/.VSCodeCounter/results.csv
+/rom/
+!/rom/*.v
