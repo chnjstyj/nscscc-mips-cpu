@@ -15,7 +15,7 @@ module stall(
 );
 
 always @(*) begin 
-    if (!Jump || jmp_reg) stall_if_id <= 1'b1;
+    if (!Jump || jmp_reg) flush_if_id <= 1'b1;
     else flush_if_id <= 1'b0;
 end
 

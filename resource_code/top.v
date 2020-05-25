@@ -1,5 +1,6 @@
 module top(
     input clk,
+    input rom_clk,
     input rst
 );
 
@@ -17,6 +18,9 @@ wire [3:0] alu_control_sig;
 wire ALU_zerotag;
 wire [4:0] shamt;
 wire bgtz_sig;
+
+//ÄÚ´æ¶ÁĞ´²âÊÔ
+reg [31:0] data;
 
 //id½×¶Î¿ØÖÆĞÅºÅ
 wire RegDst;
@@ -238,8 +242,10 @@ pc pc(
 
 inst_rom inst_rom(
     .clk(clk),
+    .rom_clk(rom_clk),
     .inst_address(inst_address),
     .ce(ce),
+    .data(data),
     .inst(cur_inst)
 );
 
@@ -253,7 +259,7 @@ id id(
     .imme_num(imme_num),
     .func(func),
     .shamt(shamt),
-    .jmp_reg
+    .jmp_reg(jmp_reg)
 );
 
 pre_branch pre_branch(
@@ -371,5 +377,10 @@ redirect redirect(
     .control_rdata_a(control_rdata_a),
     .control_rdata_b(control_rdata_b)
 );
+
+always @(*) begin 
+    if (inst_address == 32'h00000000) data <= 32'h34010001;
+    else if (inst_address == 32'h00000004) data <= 32'h34020001;
+end
 
 endmodule
