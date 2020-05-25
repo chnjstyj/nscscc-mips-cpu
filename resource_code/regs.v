@@ -1,6 +1,3 @@
-//未加流水线 不考虑旁路
-//未加读使能，可能以后需要
-
 module regs(
     input clk,
     input rst,
