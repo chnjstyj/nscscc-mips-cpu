@@ -8,4 +8,8 @@ resource_code/.VSCodeCounter/results.txt
 resource_code/.VSCodeCounter/results.csv
 /rom/
 !/rom/*.v
+<<<<<<< HEAD
 /doc/
+=======
+
+>>>>>>> 1e41bbf2bc6626f75e4c1a8c81e67aedd995fee6
