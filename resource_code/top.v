@@ -190,7 +190,7 @@ ex_mem ex_mem(
     .ex_MemtoReg(ex_MemtoReg),
     .ex_RegWrite(ex_RegWrite),
     .ex_alu_result(alu_result),
-    .ex_rdata_b(ex_rdata_b),
+    .ex_rdata_b(alu_rdata_b),
     .ex_opcode(ex_opcode),
     .ex_imme_num(ex_imme_num),
     .ex_wreg(ex_wreg),

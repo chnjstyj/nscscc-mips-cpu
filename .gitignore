@@ -7,10 +7,11 @@ resource_code/.VSCodeCounter/results.md
 resource_code/.VSCodeCounter/results.txt
 resource_code/.VSCodeCounter/results.csv
 /rom/
-!/rom/*.v
+!/rom/.v
 <<<<<<< HEAD
-/doc/
+/doc/*
 !/doc/*.pdf
+
 =======
 
 >>>>>>> 1e41bbf2bc6626f75e4c1a8c81e67aedd995fee6

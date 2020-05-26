@@ -17,6 +17,17 @@ wire rfin;
 
 initial $readmemh( "F:\inst_rom.data", inst_rom );
 
+//
+always @(*) begin
+    if(ce == 1'b0) begin 
+        inst <= 32'h00000000;
+    end 
+    else begin 
+        inst <= inst_rom[inst_address[11:2]];
+    end 
+end 
+/*
+//读内存
 always @(*) begin 
     if(ce == 1'b0) begin
         inst <= 32'h00000000;
@@ -27,12 +38,11 @@ always @(*) begin
         if(rfin) inst <= dout;
         else inst <= inst;
     end
+end
 /*
 mips 按字节寻址，所以指令地址要/2，最后两位不取。
 且log2(1024) = 10,所以只取前10位。
 */
-end 
-
 rom_read rom_read(
     .clk(rom_clk),
     .rst(rst),
