@@ -47,15 +47,15 @@ always @(posedge clk) begin
             2'b00: ram_a[alu_result[9:2]] <= ram_a[alu_result[9:2]];              //sc指令先不实现
             2'b01:begin                                                         //sb
                 ram_a[alu_result[9:2]] <= din[7:0];
-                ram_b[alu_result[9:2]] <= 8'h00;
-                ram_c[alu_result[9:2]] <= 8'h00;
-                ram_d[alu_result[9:2]] <= 8'h00;                    
+                ram_b[alu_result[9:2]] <= ram_b[alu_result[9:2]];
+                ram_c[alu_result[9:2]] <= ram_c[alu_result[9:2]];
+                ram_d[alu_result[9:2]] <= ram_d[alu_result[9:2]];                    
             end
             2'b10:begin                                                         //sh
                 ram_a[alu_result[9:2]] <= din[7:0];
                 ram_b[alu_result[9:2]] <= din[15:8];
-                ram_c[alu_result[9:2]] <= 8'h00;
-                ram_d[alu_result[9:2]] <= 8'h00;
+                ram_c[alu_result[9:2]] <= ram_c[alu_result[9:2]];
+                ram_d[alu_result[9:2]] <= ram_d[alu_result[9:2]];
             end
             2'b11:begin
                 ram_a[alu_result[9:2]] <= din[7:0];

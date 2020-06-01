@@ -11,6 +11,7 @@ resource_code/.VSCodeCounter/results.csv
 <<<<<<< HEAD
 /doc/*
 !/doc/*.pdf
+/uart/*
 
 =======
 

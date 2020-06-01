@@ -17,9 +17,6 @@ module stall(
 always @(*) begin 
     if (!Jump || jmp_reg) flush_if_id <= 1'b1;
     else flush_if_id <= 1'b0;
-end
-
-always @(*) begin 
     if(id_Branch && ex_RegWrite) begin        //暂停流水线一个周期
         stall_pc <= 1'b1;
         stall_if_id <= 1'b1;
@@ -29,8 +26,8 @@ always @(*) begin
         stall_if_id <= 1'b0;
     end 
 end 
-
-always @(*) begin 
+/*
+always @(*) begin         //延迟槽相关代码
     if((id_Branch && zero_sig)||bgtz_sig) begin 
         //stall_if_id <= 1'b1;
         //stall_id_ex <= 1'b1;
@@ -39,7 +36,7 @@ always @(*) begin
         //stall_if_id <= 1'b0;
         //stall_id_ex <= 1'b0; 
     end
-end
+end*/
 
 /*        
 always @(*) begin 
