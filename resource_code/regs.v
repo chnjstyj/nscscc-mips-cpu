@@ -4,22 +4,22 @@ module regs(
     input [4:0] rreg_a,
     input [4:0] rreg_b,
     input [4:0] wreg,
-    input [31:0] wdata,        //å†™å…¥å¯„å­˜å™¨çš„æ•°æ®
-    input RegWrite,            //å¯„å­˜å™¨å†™æ§åˆ¶ä¿¡å·
-    input [31:0] inst_address,       //jal æŒ‡ä»¤ç”¨
-    input store_pc,                  //jalæŒ‡ä»¤ç”¨ä¿¡å·
+    input [31:0] wdata,        //Ğ´Èë¼Ä´æÆ÷µÄÊı¾İ
+    input RegWrite,            //¼Ä´æÆ÷Ğ´¿ØÖÆĞÅºÅ
+    input [31:0] inst_address,       //jal Ö¸ÁîÓÃ
+    input store_pc,                  //jalÖ¸ÁîÓÃĞÅºÅ
     output reg [31:0] rdata_a,
     output reg [31:0] rdata_b
 );
 reg [31:0] regs[0:31];
 
-initial regs[0] = 32'h00000000;     //å¯„å­˜å™¨å€¼åˆå§‹åŒ–ä¸º0
+initial regs[0] = 32'h00000000;     //¼Ä´æÆ÷Öµ³õÊ¼»¯Îª0
 
 
-//å†™æ“ä½œï¼Œåœ¨æ—¶é’Ÿè¾¹æ²¿å®Œæˆå†™æ“ä½œ
+//Ğ´²Ù×÷£¬ÔÚÊ±ÖÓ±ßÑØÍê³ÉĞ´²Ù×÷
 always @(posedge clk) begin 
     if(rst != 1'b0) begin 
-        if(RegWrite == 1'b1&& wreg != 5'b00000 && wreg != 5'd31 ) begin     //ä¸èƒ½å¯¹å¯„å­˜å™¨0å†™
+        if(RegWrite == 1'b1&& wreg != 5'b00000 && wreg != 5'd31 ) begin     //²»ÄÜ¶Ô¼Ä´æÆ÷0Ğ´
             regs[wreg] <= wdata;
         end
        // else if(RegWrite == 1'b1&& wreg != 5'b00000 && wreg == 5'd31 ) begin
@@ -36,21 +36,21 @@ always @(posedge clk) begin
 end
 
 
-//è¯»æ“ä½œæ— éœ€åœ¨æ—¶é’Ÿè¾¹æ²¿
-//è¯»å¯„å­˜å™¨1
+//¶Á²Ù×÷ÎŞĞèÔÚÊ±ÖÓ±ßÑØ
+//¶Á¼Ä´æÆ÷1
 
 always @(*) begin 
     if(rst == 1'b0) begin 
         rdata_a <= 32'h00000000;
     end 
-    else if(rreg_a == wreg && RegWrite) begin       //æ•°æ®ç›´é€š
+    else if(rreg_a == wreg && RegWrite) begin       //Êı¾İÖ±Í¨
         rdata_a <= wdata;
     end
     else begin
         rdata_a <= regs[rreg_a];
     end
 end
-//è¯»å¯„å­˜å™¨2
+//¶Á¼Ä´æÆ÷2
 
 always @(*) begin 
     if(rst == 1'b0) begin 

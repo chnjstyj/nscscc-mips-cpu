@@ -1,4 +1,4 @@
-module inst_rom(                 //æŒ‡ä»¤å¯„å­˜å™¨
+module inst_rom(                 //Ö¸Áî¼Ä´æÆ÷
     input clk,
     input rom_clk,
     input [31:0] inst_address,
@@ -7,7 +7,7 @@ module inst_rom(                 //æŒ‡ä»¤å¯„å­˜å™¨
     output reg [31:0] inst 
 );
 
-reg [31:0] inst_rom[0:1023];      //4kbçš„reg
+reg [31:0] inst_rom[0:1023];      //4kbµÄreg
 reg read_ce;
 reg [31:0] address;
 always @(*) address <= {20'h00000,inst_address[11:2],2'b00};
@@ -27,7 +27,7 @@ always @(*) begin
     end 
 end 
 /*
-//è¯»å†…å­˜
+//¶ÁÄÚ´æ
 always @(*) begin 
     if(ce == 1'b0) begin
         inst <= 32'h00000000;
@@ -40,8 +40,8 @@ always @(*) begin
     end
 end
 /*
-mips æŒ‰å­—èŠ‚å¯»å€ï¼Œæ‰€ä»¥æŒ‡ä»¤åœ°å€è¦/2ï¼Œæœ€åä¸¤ä½ä¸å–ã€‚
-ä¸”log2(1024) = 10,æ‰€ä»¥åªå–å‰10ä½ã€‚
+mips °´×Ö½ÚÑ°Ö·£¬ËùÒÔÖ¸ÁîµØÖ·Òª/2£¬×îºóÁ½Î»²»È¡¡£
+ÇÒlog2(1024) = 10,ËùÒÔÖ»È¡Ç°10Î»¡£
 */
 rom_read rom_read(
     .clk(rom_clk),

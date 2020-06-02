@@ -8,10 +8,10 @@ module opcode_control(
     output MemWrite,        //mem
     output ALUSrc,          //ex
     output RegWrite,        //wb
-    output Jump,            //if        //ä½ç”µå¹³æœ‰æ•ˆ
+    output Jump,            //if        //µÍµçÆ½ÓĞĞ§
     output equal_branch,    //ex
-    output store_pc,        //ex        //è¿æ¥åˆ°regä¸­
-    output lui_sig,          //mem       //luiæŒ‡ä»¤ä¿¡å·,è¿æ¥åˆ°memä¸­
+    output store_pc,        //ex        //Á¬½Óµ½regÖĞ
+    output lui_sig,          //mem       //luiÖ¸ÁîĞÅºÅ,Á¬½Óµ½memÖĞ
     output greater_than
 );
 
@@ -41,6 +41,7 @@ always @(*) begin
        6'ha: control_sig <= 13'b1101010000101;            //slti
        6'hb: control_sig <= 13'b1101010000101;            //sltiu
        6'h7: control_sig <= 13'b1101000010001;            //bgtz
+       6'he: control_sig <= 13'b1111010000110;            //xori
        default: control_sig <= 13'b1100000000000;
    endcase 
 end

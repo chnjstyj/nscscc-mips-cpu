@@ -10,11 +10,11 @@ module alu(
     //input greater_than,
     //output reg zero_sig
     output reg [31:0] alu_result
-    //output reg bgtz_sig                       //bgtz ???
+    //output reg bgtz_sig                       //bgtz 信号线
 );
 
 wire [31:0] real_data_b;
-//运算结果
+//?????á??
 wire [31:0] add_result;
 wire [31:0] sub_result;
 wire [31:0] and_result;
@@ -48,7 +48,7 @@ always @(alu_control or data_a or real_data_b) begin
     endcase
 end
 
-assign real_data_b = (ALUSrc == 1'b1)?imme:data_b;                  //?????????????????
+assign real_data_b = (ALUSrc == 1'b1)?imme:data_b;                  
 
 /*always @(*) begin
     if(equal_branch) begin  

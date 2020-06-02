@@ -12,8 +12,8 @@ always @(*) begin
         4'b0001:alu_control <= 4'b0110;      //-
         4'b0011:alu_control <= 4'b0001;         //or
         4'b0100:alu_control <= 4'b0000;         //and
-        4'b0101:alu_control <= 4'b0111;     //å°äºŽåˆ™ç½®ä½
-        4'b0110:alu_control <= 4'b1100;    //æˆ–éž
+        4'b0101:alu_control <= 4'b0111;     //Ð¡ÓÚÔòÖÃÎ»
+        4'b0110:alu_control <= 4'b1100;    //»ò·Ç
         4'b0010: begin                     //R-type
             case(func) 
                 0:alu_control <= 13;
@@ -25,7 +25,7 @@ always @(*) begin
                 39:alu_control <= 12;
                 42:alu_control <= 7;
                 43:alu_control <= 7;
-                default:alu_control <= 15;           //Â²Â»Â´Ã¦Ã”Ãš
+                default:alu_control <= 15;           //??????
             endcase
         end
         default:alu_control <= 15;

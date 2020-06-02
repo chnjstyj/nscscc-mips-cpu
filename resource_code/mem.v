@@ -1,4 +1,4 @@
-    module mem(                   //ä½¿ç”¨å°ç«¯æ¨¡å¼
+    module mem(                   //Ê¹ÓÃĞ¡¶ËÄ£Ê½
     input clk,
     input [31:0] alu_result,
     input [31:0] din,
@@ -26,9 +26,9 @@ always @(posedge clk) begin
     wb_RegWrite <= mem_RegWrite;
 end
 */
-//è¯»æ•°æ®
+//¶ÁÊı¾İ
 always @(*) begin
-    if(MemRead) begin         //å–ä½10ä½ å› ä¸ºlog1024/log2 = 10  
+    if(MemRead) begin         //È¡µÍ10Î» ÒòÎªlog1024/log2 = 10  
         case (mem_sel)
             2'b00:data_out <= 32'h00000000;
             2'b01:data_out <= {24'h0,ram_a[alu_result[9:2]]};
@@ -40,11 +40,11 @@ always @(*) begin
         data_out <= 32'h00000000;
 end
 
-//å†™æ•°æ®     åœ¨æ—¶é’Ÿä¸Šå‡æ²¿
+//Ğ´Êı¾İ     ÔÚÊ±ÖÓÉÏÉıÑØ
 always @(posedge clk) begin
     if (MemWrite) begin
         case (mem_sel)
-            2'b00: ram_a[alu_result[9:2]] <= ram_a[alu_result[9:2]];              //scæŒ‡ä»¤å…ˆä¸å®ç°
+            2'b00: ram_a[alu_result[9:2]] <= ram_a[alu_result[9:2]];              //scÖ¸ÁîÏÈ²»ÊµÏÖ
             2'b01:begin                                                         //sb
                 ram_a[alu_result[9:2]] <= din[7:0];
                 ram_b[alu_result[9:2]] <= ram_b[alu_result[9:2]];
@@ -70,7 +70,7 @@ always @(posedge clk) begin
         ram_a[alu_result[9:2]] <= ram_a[alu_result[9:2]];
 end
 
-//å†³å®šå“ªä¸ªæ•°æ®å†™å›å¯„å­˜å™¨å †      å†™å›
+//¾ö¶¨ÄÄ¸öÊı¾İĞ´»Ø¼Ä´æÆ÷¶Ñ      Ğ´»Ø
 //assign dout = (MemtoReg == 1'b1)?data_out:alu_result;
 always @(*) begin 
     if (MemtoReg == 1'b1 && lui_sig != 1'b1)

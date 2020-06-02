@@ -1,14 +1,14 @@
 module pc(
     input clk,
     input rst,
-    input Branch,                  //æœ‰æ¡ä»¶è·³è½¬ä¿¡å·
-    input zero_sig,             //ALUé›¶æ ‡å¿—ä½
-    input Jump,                    //æ— æ¡ä»¶è·³è½¬ä¿¡å· ä½ç”µå¹³æœ‰æ•ˆ
-    input [31:0] imme,             //æ¥è‡ªäºid.v çš„imme_num
-    input jmp_reg,                 //jr ä¿¡å·
-    input [31:0] Rrs,                     //R[rs] å¯„å­˜å™¨å†…å®¹
-    input [31:0] jc_instaddress,   //æœ‰æ¡ä»¶è·³è½¬æŒ‡ä»¤åœ°å€
-    input [31:0] id_cur_inst,         //æ­£åœ¨æ‰§è¡Œçš„æŒ‡ä»¤
+    input Branch,                  //ÓĞÌõ¼şÌø×ªĞÅºÅ
+    input zero_sig,             //ALUÁã±êÖ¾Î»
+    input Jump,                    //ÎŞÌõ¼şÌø×ªĞÅºÅ µÍµçÆ½ÓĞĞ§
+    input [31:0] imme,             //À´×ÔÓÚid.v µÄimme_num
+    input jmp_reg,                 //jr ĞÅºÅ
+    input [31:0] Rrs,                     //R[rs] ¼Ä´æÆ÷ÄÚÈİ
+    input [31:0] jc_instaddress,   //ÓĞÌõ¼şÌø×ªÖ¸ÁîµØÖ·
+    input [31:0] id_cur_inst,         //ÕıÔÚÖ´ĞĞµÄÖ¸Áî
     input [31:0] id_next_instaddress,
     input bgtz_sig,
     input stall_pc,
@@ -22,19 +22,19 @@ wire ifbranch;
 
 
 assign Ebranch = Branch && zero_sig;
-assign next_instaddress = inst_address + 4'b0100;         //ç°æŒ‡ä»¤åœ°å€+4
+assign next_instaddress = inst_address + 4'b0100;         //ÏÖÖ¸ÁîµØÖ·+4
 
 always @(posedge clk) begin 
     if(ce == 1'b0) begin 
         inst_address <= 32'h00000000;
     end 
     else if (stall_pc == 1'b1) begin    
-        inst_address <= inst_address - 4'b0100;            //æš‚åœå–ä¸‹ä¸€æŒ‡ä»¤ 
+        inst_address <= inst_address - 4'b0100;            //ÔİÍ£È¡ÏÂÒ»Ö¸Áî 
     end
-    else if(!Ebranch&&Jump&&!jmp_reg&&!bgtz_sig) begin       //ä¸æ‰§è¡Œæœ‰æ¡ä»¶è·³è½¬ä¸æ— æ¡ä»¶è·³è½¬
+    else if(!Ebranch&&Jump&&!jmp_reg&&!bgtz_sig) begin       //²»Ö´ĞĞÓĞÌõ¼şÌø×ªÓëÎŞÌõ¼şÌø×ª
         inst_address <= next_instaddress;
     end 
-    else if(Ebranch&&Jump) begin                              //æ‰§è¡Œæœ‰æ¡ä»¶è·³è½¬
+    else if(Ebranch&&Jump) begin                              //Ö´ĞĞÓĞÌõ¼şÌø×ª
         inst_address <= jc_instaddress;          
     end
     else if(bgtz_sig) begin 
