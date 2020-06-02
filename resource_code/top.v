@@ -1,7 +1,15 @@
 module top(
     input clk,
     input rom_clk,
-    input rst
+    input rst,
+    input [15:0] rom_data_a,
+    input [15:0] rom_data_b,
+    output reg [31:0] rom_din,         //内存写数据
+    output reg [31:0] rom_dout,
+    output reg [31:0] rom_addr,
+    output reg we,
+    output reg rom_ce,
+    output reg oe
 );
 
 wire ce;
@@ -366,7 +374,15 @@ mem mem(
     //.mem_RegWrite(mem_RegWrite),
     //.wb_RegWrite(wb_RegWrite),
     //.wb_wreg(wb_wreg),
-    .imme(mem_imme_num)            //来自id阶段的立即数
+    .imme(mem_imme_num),            //来自id阶段的立即数
+    .rom_data_a(rom_data_a),
+    .rom_data_b(rom_data_b),
+    .rom_din(rom_din),
+    .rom_dout(rom_dout),
+    .rom_addr(rom_addr),
+    .we(we),
+    .ce(rom_ce),                   //pc阶段有同名线
+    .oe(oe) 
 );
 
 redirect redirect(

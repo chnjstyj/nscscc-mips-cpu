@@ -4,9 +4,9 @@ module rom_read(
     input rst,
     input read_ce,                 //¶ÁÊ¹ÄÜĞÅºÅ
     input [31:0] address,
-    input [31:0] data,
+    input [15:0] data,
     output reg [31:0] rom_addr,
-    output reg [31:0] dout,
+    output reg [15:0] dout,
     output reg ce,
     output reg we,
     output reg oe,
