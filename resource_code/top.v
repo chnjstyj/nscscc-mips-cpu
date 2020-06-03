@@ -4,12 +4,12 @@ module top(
     input rst,
     input [15:0] rom_data_a,
     input [15:0] rom_data_b,
-    output reg [31:0] rom_din,         //内存写数据
-    output reg [31:0] rom_dout,
-    output reg [31:0] rom_addr,
-    output reg we,
-    output reg rom_ce,
-    output reg oe
+    output [31:0] rom_din,         //内存写数据
+    output [31:0] rom_dout,
+    output [31:0] rom_addr,
+    output we,
+    output rom_ce,
+    output oe
 );
 
 wire ce;
@@ -362,6 +362,7 @@ pre_mem pre_mem(
 
 mem mem(
     .clk(clk),
+    .rom_clk(rom_clk),
     .alu_result(mem_alu_result),
     .din(mem_rdata_b),            //来自寄存器堆的第二个读出数据
     .MemWrite(mem_MemWrite),

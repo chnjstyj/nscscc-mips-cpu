@@ -16,12 +16,12 @@
     //output reg [4:0] wb_wreg,
     input [15:0] rom_data_a,
     input [15:0] rom_data_b,
-    output reg [31:0] rom_din,         //内存写数据
-    output reg [31:0] rom_dout,
-    output reg [31:0] rom_addr,
-    output reg we,
-    output reg ce,
-    output reg oe,
+    output [31:0] rom_din,         //内存写数据
+    output [31:0] rom_dout,
+    output [31:0] rom_addr,
+    output we,
+    output ce,
+    output oe,
     output reg [31:0] dout
 );
 //读写内存相关
@@ -48,6 +48,7 @@ always @(posedge clk) begin
 end
 */
 //读数据
+/*
 always @(*) begin
     if(MemRead) begin         //取低10位 因为log1024/log2 = 10  
         case (mem_sel)
@@ -90,9 +91,9 @@ always @(posedge clk) begin
     else 
         ram_a[alu_result[9:2]] <= ram_a[alu_result[9:2]];
 end
-
+*/
 //写数据到内存
-always @(posedge clk) begin 
+always @(*) begin 
     if(MemWrite) begin 
         write_ce <= 1'b1;
         case (mem_sel)
@@ -103,7 +104,7 @@ always @(posedge clk) begin
             default:write_ce <= 1'b0;
         endcase
         if(wfin_a && wfin_b) begin
-            write_ce <= 1'b0;
+            //write_ce <= 1'b0;
             wdata <= 32'hzzzzzzzz;
         end 
         else begin 
@@ -148,7 +149,7 @@ always @(*) begin
         dout <= {{imme[15:0]},16'b0};
 end
 
-rom_write_a rom_write(
+rom_write rom_write_a(
     .clk(rom_clk),
     .rst(rst),
     .write_ce(write_ce),
@@ -163,7 +164,7 @@ rom_write_a rom_write(
     .oe(oe)
 );
 
-rom_write_b rom_write(
+rom_write rom_write_b(
     .clk(rom_clk),
     .rst(rst),
     .write_ce(write_ce),
@@ -178,7 +179,7 @@ rom_write_b rom_write(
     .oe(oe)
 );
 
-rom_read_a rom_read(
+rom_read rom_read_a(
     .clk(rom_clk),
     .rst(rst),
     .read_ce(read_ce),
@@ -192,7 +193,7 @@ rom_read_a rom_read(
     .rfin(rfin_a)
 );
 
-rom_read_b rom_read(
+rom_read rom_read_b(
     .clk(rom_clk),
     .rst(rst),
     .read_ce(read_ce),

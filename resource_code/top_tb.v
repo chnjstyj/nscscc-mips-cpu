@@ -20,19 +20,19 @@ end
 
 always @(*) begin
     forever begin
-        #20; clk = ~clk;
+        #10; clk = ~clk;
     end
 end
 
 always @(*) begin
     forever begin 
-        #2; rom_clk = ~rom_clk;
+        #1; rom_clk = ~rom_clk;
     end
 end
 
 initial begin  
     rst = 0;
-    #80;
+    #100;
     rst = 1;
     #10000000;
     rst = 0;

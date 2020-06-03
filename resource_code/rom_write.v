@@ -73,20 +73,15 @@ always @(posedge clk) begin
                 oe <= 1'b1;
                 rom_addr <= 32'h00000000;
                 wfin <= 1'b0;
-                dout <= 16'h0000;
+                dout <= 16'hxxxx;
             end
             s1:begin 
-                if(i < 1) begin
                     rom_addr <= address;
-                    state_fin <= 1'b0;
+                    //state_fin <= 1'b0;
                     ce <= 1'b0;
-                    i <= i + 1;
-                end 
-                else if(i == 1) begin 
-                    we <= 2'b0;
+                    we <= 1'b0;
                     state_fin <= 1'b1;
                     i <= 0;
-                end 
             end  
             s2:begin 
                 state_fin <= 1'b0;
