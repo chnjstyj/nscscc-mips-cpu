@@ -1,11 +1,11 @@
 `timescale 1ns/1ps
-module rom_read(
+module drom_read(
     input clk,         //2ns
     input rst,
     input read_ce,                 //读使能信号
     input [31:0] address,
-    input [15:0] dout,             //连接到内存芯片Dout
-    output reg [31:0] rom_addr,
+    input [15:0] dout,
+    output [31:0] rom_addr,
     output reg [15:0] data,
     output reg ce,
     output reg we,
@@ -17,8 +17,8 @@ module rom_read(
 
 localparam s0 = 2'b00;
 localparam s1 = 2'b01;
-localparam s2 = 2'b10;
-localparam s3 = 2'b11;
+localparam s2 = 2'b11;
+localparam s3 = 2'b10;
 
 reg [1:0] i;
 
@@ -72,75 +72,74 @@ end
 always @(posedge clk) begin
     if (rst || !read_ce) begin
         i <= 2'd0;
-        data <= 32'h00000000;
+        data <= 16'h0000;
         ce <= 1'b1;
         oe <= 1'b1;
-        rom_addr <= 32'h00000000;
+        //rom_addr <= 16'h0000;
         state_fin <= 1'b0;
     end 
     else begin 
         case (next_state)
             s0:begin           //准备
             i <= 2'd0;
-            data <= 32'h00000000;
+            data <= 16'hxxxx;
             ce <= 1'b1;
             oe <= 1'b1;
-            rom_addr <= 32'h00000000;
+            //rom_addr <= 16'h0000;
             state_fin <= 1'b0;
             rfin <= 1'b0;
             end 
-            s1:begin i <= 2'd0;          //给出地址，信号拉低 4ns
-                if (i < 2'd1) begin 
-                    state_fin <= 1'b0;
-                    rom_addr <= address;
-                    i <= i + 2'd1;
-                end 
-                else if(i == 2'd1) begin
-                    ce <= 1'b0;
+            s1:begin          //延时2ns,oe&ce拉低
+                    //rom_addr <= address;
                     oe <= 1'b0;
+                    ce <= 1'b0;
                     state_fin <= 1'b1;
                     i <= 2'd0;
-                end 
             end
-            s2:begin  i <= 2'd0;         //读数据阶段 4ns
-                if (i < 2'd1) begin 
-                    state_fin <= 1'b0;
+            s2:begin         //等2ns，读数据
+                //if (i < 2'd1) begin 
+                    state_fin <= 1'b1;
+                    //i <= i + 2'd1; 
                     data <= dout;
-                    i <= i + 2'd1; 
-                end 
-                else begin 
-                    state_fin <= 1'b1;
+                //end 
+                //else begin 
+                    //state_fin <= 1'b1;
                     i <= 2'd0;
-                end 
+                //end 
             end
-            s3: begin                   //维持至少3.5ns
-                if (i < 2'd1) begin 
+            s3: begin                   //等2ns，拉高ce&oe,等2ns完成
+                if (i == 2'd0) begin 
                     state_fin <= 1'b0;
                     oe <= 1'b0;
                     ce <= 1'b0;
                     i <= i + 1;
-                end 
+                    rfin <= 1'b1;
+                end
                 else begin 
+                    //rfin <= 1'b1;
                     oe <= 1'b1;
                     ce <= 1'b1;
-                    rfin <= 1'b1;
                     state_fin <= 1'b1;
                     i <= 2'd0;
+                    rfin <= 1'b0;
                 end 
             end
             default:begin 
                 i <= 2'd0;
-                data <= 32'h00000000;
+                data <= 16'hxxxx;
                 ce <= 1'b1;
                 oe <= 1'b1;
-                rom_addr <= 32'h00000000;
+                //rom_addr <= 16'h0000;
                 rfin <= 1'b0;
             end 
         endcase
     end
 end
 
+assign rom_addr = (read_ce == 1'b1 && next_state != s0)?address:32'h00000000;
+
 always @(*) we <= 1'b1;
+
 
 endmodule
 

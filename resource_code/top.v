@@ -2,14 +2,22 @@ module top(
     input clk,
     input rom_clk,
     input rst,
-    input [15:0] rom_data_a,
-    input [15:0] rom_data_b,
-    output [31:0] rom_din,         //内存写数据
-    output [31:0] rom_dout,
-    output [31:0] rom_addr,
-    output we,
-    output rom_ce,
-    output oe
+    //drom相关信号
+    input [15:0] drom_data_a,
+    input [15:0] drom_data_b,
+    output [31:0] drom_din,         //内存写数据
+    output [31:0] drom_dout,
+    output [31:0] drom_addr,
+    output drom_we,
+    output drom_ce,
+    output drom_oe,
+    //irom相关信号
+    input [15:0] irom_data_a,        //连接到内存芯片Dout
+    input [15:0] irom_data_b,
+    output [31:0] irom_addr,
+    output irom_ce,
+    output irom_we,
+    output irom_oe
 );
 
 wire ce;
@@ -27,10 +35,8 @@ wire ALU_zerotag;
 wire [4:0] shamt;
 wire bgtz_sig;
 
-//内存读写测试
-reg [31:0] data;
-
 //id阶段控制信号
+wire [31:0] jump_address;
 wire RegDst;
 wire Branch;
 wire MemRead;
@@ -239,8 +245,9 @@ pc pc(
     .jmp_reg(jmp_reg),
     .Rrs(ex_rdata_a),                
     .jc_instaddress(jc_instaddress),
-    .id_cur_inst(id_inst),
-    .id_next_instaddress(id_next_instaddress),
+    //.id_cur_inst(id_inst),
+    //.id_next_instaddress(id_next_instaddress),
+    .jump_address,
     .inst_address(inst_address),
     .next_instaddress(next_instaddress),
     .bgtz_sig(bgtz_sig),
@@ -253,12 +260,19 @@ inst_rom inst_rom(
     .rom_clk(rom_clk),
     .inst_address(inst_address),
     .ce(ce),
-    .data(data),
-    .inst(cur_inst)
+    //.data(data),
+    .inst(cur_inst),
+    .rdata_a(irom_data_a),
+    .rdata_b(irom_data_b),
+    .rom_addr(irom_addr),
+    .rom_ce(irom_ce),
+    .we(irom_we),
+    .oe(irom_oe)
 );
 
 id id(
     .inst(id_inst),
+    .next_instaddress(id_next_instaddress[31:28]),
     .RegDst(RegDst),
     .opcode(opcode),
     .rreg_a(rreg_a),
@@ -376,14 +390,14 @@ mem mem(
     //.wb_RegWrite(wb_RegWrite),
     //.wb_wreg(wb_wreg),
     .imme(mem_imme_num),            //来自id阶段的立即数
-    .rom_data_a(rom_data_a),
-    .rom_data_b(rom_data_b),
-    .rom_din(rom_din),
-    .rom_dout(rom_dout),
-    .rom_addr(rom_addr),
-    .we(we),
-    .ce(rom_ce),                   //pc阶段有同名线
-    .oe(oe) 
+    .rom_data_a(drom_data_a),
+    .rom_data_b(drom_data_b),
+    .rom_din(drom_din),
+    .rom_dout(drom_dout),
+    .rom_addr(drom_addr),
+    .we(drom_we),
+    .ce(drom_ce),                   //pc阶段有同名线
+    .oe(drom_oe) 
 );
 
 redirect redirect(
@@ -394,10 +408,10 @@ redirect redirect(
     .control_rdata_a(control_rdata_a),
     .control_rdata_b(control_rdata_b)
 );
-
+/*
 always @(*) begin 
     if (inst_address == 32'h00000000) data <= 32'h34010001;
     else if (inst_address == 32'h00000004) data <= 32'h34020001;
-end
+end*/
 
 endmodule

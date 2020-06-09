@@ -1,5 +1,6 @@
 module id(
     input [31:0] inst,
+    input [3:0] next_instaddress,
     input RegDst,                 //来自控制信号的regdis
     output [5:0] opcode,
     output [4:0] rreg_a,         //读寄存器1 Rs
@@ -8,9 +9,11 @@ module id(
     output [31:0] imme_num,       //立即数
     output [5:0] func,           //指令func段 
     output [4:0] shamt,
-    output reg jmp_reg           //jr 信号，连接到pc
+    output reg jmp_reg,           //jr 信号，连接到pc
+    output [31:0] jump_address
 );
 
+assign jump_address = {next_instaddress,inst[25:0],2'b00};
 assign opcode = inst[31:26];
 assign rreg_a = inst[25:21];
 assign rreg_b = inst[20:16];

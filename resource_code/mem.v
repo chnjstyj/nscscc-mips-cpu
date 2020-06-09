@@ -179,28 +179,28 @@ rom_write rom_write_b(
     .oe(oe)
 );
 
-rom_read rom_read_a(
+drom_read drom_read_a(
     .clk(rom_clk),
     .rst(rst),
     .read_ce(read_ce),
     .address({2'b00,alu_result[31:2]}),
-    .data(rom_data_a),
+    .dout(rom_data_a),
     .rom_addr(rom_addr),
-    .dout(rom_rdata[15:0]),
+    .data(rom_rdata[15:0]),
     .ce(ce),
     .we(we),
     .oe(oe),
     .rfin(rfin_a)
 );
 
-rom_read rom_read_b(
+drom_read drom_read_b(
     .clk(rom_clk),
     .rst(rst),
     .read_ce(read_ce),
     .address({2'b00,alu_result[31:2]}),
-    .data(rom_data_b),
+    .dout(rom_data_b),
     .rom_addr(rom_addr),
-    .dout(rom_rdata[31:16]),
+    .data(rom_rdata[31:16]),
     .ce(ce),
     .we(we),
     .oe(oe),
