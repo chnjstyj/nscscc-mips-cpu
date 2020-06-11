@@ -3,6 +3,12 @@ module inst_rom(                 //指令寄存器
     input rom_clk,
     input [31:0] inst_address,
     input ce,
+    output reg read_ce,
+    output [31:0] irom_addr,
+    input [31:0] rom_inst,
+    input rfin_c,
+    input rfin_d,
+    /*
     input [15:0] rdata_a,
     input [15:0] rdata_b,
     output [31:0] rom_addr,
@@ -10,16 +16,17 @@ module inst_rom(                 //指令寄存器
     output we,
     output oe,
     output reg [31:0] inst 
+    */
 );
 
-reg [31:0] inst_rom[0:1023];      //4kb的reg
-reg read_ce;
-reg [31:0] address;
-always @(*) address <= {20'h00000,inst_address[11:2],2'b00};
+//reg [31:0] inst_rom[0:1023];      //4kb的reg
+//reg read_ce;
+//reg [31:0] address;
+assign irom_addr = {inst_address[31:2],2'b00};
 
-wire [15:0] data_a;
-wire [15:0] data_b;
-wire rfin;
+//wire [15:0] data_a;
+//wire [15:0] data_b;
+//wire rfin;
 
 //initial $readmemh( "F:\inst_rom.data", inst_rom );
 
@@ -41,7 +48,7 @@ always @(*) begin
     end 
     else begin 
         read_ce <= 1'b1;
-        if(rfin) inst <= {data_b,data_a};
+        if(rfin_c && rfin_d) inst <= rom_inst;
         else inst <= inst;
     end
 end
@@ -49,6 +56,7 @@ end
 mips 按字节寻址，所以指令地址要/2，最后两位不取。
 且log2(1024) = 10,所以只取前10位。
 */
+/*
 irom_read irom_read_a(
     .clk(rom_clk),
     .rst(rst),
@@ -74,5 +82,6 @@ irom_read irom_read_b(
     .we(we),
     .oe(oe)
 );
+*/
 
 endmodule  

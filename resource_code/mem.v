@@ -14,6 +14,7 @@
     //input mem_RegWrite,
     //output reg wb_RegWrite,
     //output reg [4:0] wb_wreg,
+    /*
     input [15:0] rom_data_a,
     input [15:0] rom_data_b,
     output [31:0] rom_din,         //内存写数据
@@ -22,8 +23,20 @@
     output we,
     output ce,
     output oe,
-    output reg [31:0] dout
+    output reg [31:0] dout*/
+    output drom_addr,
+    output reg write_ce,
+    output reg [31:0] wdata,
+    output reg read_ce,
+    input [31:0] rom_rdata,
+    input wfin_a,
+    input wfin_b,
+    input rfin_a,
+    input rfin_b
 );
+
+assign drom_addr = {2'b00,alu_result[31:2]};
+/*
 //读写内存相关
 reg [31:0] wdata;
 reg write_ce;
@@ -39,7 +52,7 @@ wire [31:0] rom_rdata;
 reg [7:0] ram_a[0:1023];
 reg [7:0] ram_b[0:1023];
 reg [7:0] ram_c[0:1023];
-reg [7:0] ram_d[0:1023];
+reg [7:0] ram_d[0:1023];*/
 reg [31:0] data_out;
 /*
 always @(posedge clk) begin 
@@ -148,7 +161,7 @@ always @(*) begin
     else if (lui_sig == 1'b1)
         dout <= {{imme[15:0]},16'b0};
 end
-
+/*
 rom_write rom_write_a(
     .clk(rom_clk),
     .rst(rst),
@@ -206,5 +219,5 @@ drom_read drom_read_b(
     .oe(oe),
     .rfin(rfin_b)
 );
-
+*/
 endmodule 

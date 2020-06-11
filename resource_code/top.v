@@ -1,7 +1,24 @@
 module top(
     input clk,
-    input rom_clk,
+    //input rom_clk,
     input rst,
+    //drom
+    input [31:0] rom_rdata,
+    output [31:0] drom_addr,
+    output dwrite_ce,
+    output [31:0] wdata,
+    output dread_ce,
+    input rfin_a,
+    input rfin_b,
+    input wfin_a,
+    input wfin_b,
+    //irom
+    output iread_ce,
+    output [31:0] irom_addr,
+    input [31:0] rom_inst,
+    input rfin_c,
+    input rfin_d
+    /*
     //drom相关信号
     input [15:0] drom_data_a,
     input [15:0] drom_data_b,
@@ -18,6 +35,7 @@ module top(
     output irom_ce,
     output irom_we,
     output irom_oe
+    */
 );
 
 wire ce;
@@ -262,12 +280,19 @@ inst_rom inst_rom(
     .ce(ce),
     //.data(data),
     .inst(cur_inst),
+    .read_ce(iread_ce),
+    .irom_addr(irom_addr),
+    .rom_inst(rom_inst),
+    .rfin_c(rfin_c),
+    .rfin_d(rfin_d)
+    /*
     .rdata_a(irom_data_a),
     .rdata_b(irom_data_b),
     .rom_addr(irom_addr),
     .rom_ce(irom_ce),
     .we(irom_we),
     .oe(irom_oe)
+    */
 );
 
 id id(
@@ -390,6 +415,7 @@ mem mem(
     //.wb_RegWrite(wb_RegWrite),
     //.wb_wreg(wb_wreg),
     .imme(mem_imme_num),            //来自id阶段的立即数
+    /*
     .rom_data_a(drom_data_a),
     .rom_data_b(drom_data_b),
     .rom_din(drom_din),
@@ -398,6 +424,16 @@ mem mem(
     .we(drom_we),
     .ce(drom_ce),                   //pc阶段有同名线
     .oe(drom_oe) 
+    */
+    .drom_addr(drom_addr),
+    .write_ce(dwrite_ce),
+    .wdata(wdata),
+    .read_ce(dread_ce),
+    .rom_rdata(rom_rdata),
+    .wfin_a(wfin_a),
+    .wfin_b(wfin_b),
+    .rfin_a(rfin_a),
+    .rfin_b(rfin_b)
 );
 
 redirect redirect(
