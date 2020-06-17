@@ -18,7 +18,7 @@ initial regs[0] = 32'h00000000;     //寄存器值初始化为0
 
 //写操作，在时钟边沿完成写操作
 always @(posedge clk) begin 
-    if(rst != 1'b0) begin 
+    if(rst == 1'b0) begin 
         if(RegWrite == 1'b1&& wreg != 5'b00000 && wreg != 5'd31 ) begin     //不能对寄存器0写
             regs[wreg] <= wdata;
         end
@@ -40,7 +40,7 @@ end
 //读寄存器1
 
 always @(*) begin 
-    if(rst == 1'b0) begin 
+    if(rst == 1'b1) begin 
         rdata_a <= 32'h00000000;
     end 
     else if(rreg_a == wreg && RegWrite) begin       //数据直通
@@ -53,7 +53,7 @@ end
 //读寄存器2
 
 always @(*) begin 
-    if(rst == 1'b0) begin 
+    if(rst == 1'b1) begin 
         rdata_b <= 32'h00000000;
     end 
     else if(rreg_b == wreg && RegWrite) begin 

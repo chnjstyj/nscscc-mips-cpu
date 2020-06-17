@@ -24,7 +24,7 @@ module ex_mem(
 );
 
 always @(posedge clk) begin 
-        if(rst == 1'b0) begin 
+        if(rst == 1'b1) begin 
             mem_lui_sig <= 1'b0;
             mem_MemRead <= 1'b0;
             mem_MemWrite <= 1'b0;

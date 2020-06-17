@@ -49,7 +49,7 @@
 );
 
 always @(posedge clk) begin 
-        if(rst == 1'b0 || flush_id_ex) begin 
+        if(rst == 1'b1 || flush_id_ex) begin 
             //ex_Branch <= 1'b0;
             ex_MemRead <= 1'b0;
             ex_MemtoReg <= 1'b0;

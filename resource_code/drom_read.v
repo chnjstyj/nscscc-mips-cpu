@@ -4,11 +4,11 @@ module drom_read(
     input rst,
     input read_ce,                 //读使能信号
     input [31:0] address,
-    input [15:0] dout,
-    output [31:0] rom_addr,
-    output reg [15:0] data,
+    input [31:0] dout,
+    output [19:0] rom_addr,
+    output reg [31:0] data,
     output reg ce,
-    output reg we,
+    output we,
     output reg oe,
     output reg rfin               //数据读取完成信号
     //output lb,
@@ -20,14 +20,14 @@ localparam s1 = 2'b01;
 localparam s2 = 2'b11;
 localparam s3 = 2'b10;
 
-reg [1:0] i;
+(* dont_touch = "1" *)reg [1:0] i;
 
-reg [1:0] cur_state;
+(* dont_touch = "1" *)reg [1:0] cur_state;
 reg [1:0] next_state;
 reg state_fin;
 
 always @(posedge clk) begin 
-    if (rst || !read_ce) begin 
+    if (rst) begin 
         cur_state <= s0;
     end
     else begin 
@@ -70,9 +70,9 @@ end
 
 
 always @(posedge clk) begin
-    if (rst || !read_ce) begin
+    if (rst) begin
         i <= 2'd0;
-        data <= 16'h0000;
+        data <= 32'h00000000;
         ce <= 1'b1;
         oe <= 1'b1;
         //rom_addr <= 16'h0000;
@@ -82,12 +82,12 @@ always @(posedge clk) begin
         case (next_state)
             s0:begin           //准备
             i <= 2'd0;
-            data <= 16'hxxxx;
+            data <= 32'h00000000;
             ce <= 1'b1;
             oe <= 1'b1;
             //rom_addr <= 16'h0000;
-            state_fin <= 1'b0;
             rfin <= 1'b0;
+            state_fin <= 1'b0;
             end 
             s1:begin          //延时2ns,oe&ce拉低
                     //rom_addr <= address;
@@ -126,7 +126,7 @@ always @(posedge clk) begin
             end
             default:begin 
                 i <= 2'd0;
-                data <= 16'hxxxx;
+                data <= 32'h00000000;
                 ce <= 1'b1;
                 oe <= 1'b1;
                 //rom_addr <= 16'h0000;
@@ -138,7 +138,7 @@ end
 
 assign rom_addr = (read_ce == 1'b1 && next_state != s0)?address:32'h00000000;
 
-always @(*) we <= 1'b1;
+assign we = 1'b1;
 
 
 endmodule

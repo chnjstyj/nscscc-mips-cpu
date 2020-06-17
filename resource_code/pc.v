@@ -4,7 +4,7 @@ module pc(
     input Branch,                  //有条件跳转信号
     input zero_sig,             //ALU零标志位
     input Jump,                    //无条件跳转信号 低电平有效
-    input [31:0] imme,             //来自于id.v 的imme_num
+    (* dont_touch = "1" *)input [31:0] imme,             //来自于id.v 的imme_num
     input jmp_reg,                 //jr 信号
     input [31:0] Rrs,                     //R[rs] 寄存器内容
     input [31:0] jc_instaddress,   //有条件跳转指令地址
@@ -18,7 +18,7 @@ module pc(
     output reg ce           
 );
 
-wire ifbranch;
+//wire ifbranch;
 //wire [31:0] next_instaddress ;
 
 
@@ -27,7 +27,7 @@ assign next_instaddress = inst_address + 4'b0100;         //现指令地址+4
 
 always @(posedge clk) begin 
     if(ce == 1'b0) begin 
-        inst_address <= 32'h00000000;
+        inst_address <= 32'h80000000;
     end 
     else if (stall_pc == 1'b1) begin    
         inst_address <= inst_address - 4'b0100;            //暂停取下一指令 
@@ -51,7 +51,7 @@ always @(posedge clk) begin
 end
 
 always @(posedge clk) begin 
-    if(rst == 1'b0) begin 
+    if(rst == 1'b1) begin 
         ce <= 1'b0;
     end 
     else begin 

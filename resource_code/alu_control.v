@@ -1,8 +1,8 @@
 module alu_control(
     input [5:0] func,
     input [3:0] ALUOp,
-    input [5:0] opcode,
-    output reg unsigned_num,
+    (* dont_touch = "1" *)input [5:0] opcode,
+    //output reg unsigned_num,
     output reg [3:0]  alu_control
 );
 
@@ -31,7 +31,7 @@ always @(*) begin
         default:alu_control <= 15;
     endcase
 end 
-
+/*
 always @(*) begin   
     case (opcode)
         6'h9:unsigned_num <= 1'b1;
@@ -48,5 +48,5 @@ always @(*) begin
     default: unsigned_num <= 1'b0;
     endcase
 end
-
+*/
 endmodule 

@@ -1,6 +1,6 @@
 module branch(
     input [31:0] next_instaddress,
-    input [31:0] imme,             //来自于id.v 的imme_num
+    (* dont_touch = "1" *)input [31:0] imme,             //来自于id.v 的imme_num
     input [31:0] rdata_a,                 //来自regs.v
     input [31:0] rdata_b,
     input greater_than,                    //来自opcode.v

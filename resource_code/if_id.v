@@ -12,7 +12,7 @@ module if_id(
 );
 
 always @(posedge clk) begin
-    if(rst == 1'b0 || flush_if_id == 1'b1) begin
+    if(rst == 1'b1 || flush_if_id == 1'b1) begin
         id_inst <= 32'h00000000;
         id_cur_instaddress <= 32'h00000000;
         id_next_instaddress <= 32'h00000000;

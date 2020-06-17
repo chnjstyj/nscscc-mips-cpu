@@ -2,15 +2,15 @@ module rom_write(
     input clk,                 //2ns
     input rst,
     input write_ce,
-    input [15:0] wdata,
-    input [31:0] address,
-    output reg [15:0] dout,
-    output reg [15:0] din,
-    output [31:0] rom_addr,
+    input [31:0] wdata,
+    input [19:0] address,
+    (* dont_touch = "1" *)input [31:0] dout,
+    output reg [31:0] din,
+    output [19:0] rom_addr,
     output reg wfin,
     output we,
     output ce,
-    output reg oe
+    output oe
 );
 
 localparam s0 = 2'b00;
@@ -58,9 +58,9 @@ always @(posedge clk) begin
         i <= 0;
         //we <= 1'b1;
         //ce <= 1'b1;
-        oe <= 1'b1;
+        //oe <= 1'b1;
         //rom_addr <= 32'h00000000;
-        dout <= 16'hxxxx;
+        //dout <= 16'hxxxx;
         wfin <= 1'b0;
     end 
     else begin 
@@ -70,10 +70,10 @@ always @(posedge clk) begin
                 i <= 0;
                 //we <= 1'b1;
                 //ce <= 1'b1;
-                oe <= 1'b1;
+                //oe <= 1'b1;
                 //rom_addr <= 32'h00000000;
                 wfin <= 1'b0;
-                dout <= 16'hxxxx;
+                //dout <= 16'hxxxx;
             end
             s1:begin 
                     //rom_addr <= address;
@@ -82,12 +82,12 @@ always @(posedge clk) begin
                     //we <= 1'b0;
                     state_fin <= 1'b1;
                     i <= 0;
-                    dout <= 16'hzzzz;
+                    //dout <= 16'hzzzz;
             end  
             s2:begin 
                 state_fin <= 1'b1;
                 i <= 0;
-                dout <= 16'hzzzz;
+                //dout <= 16'hzzzz;
             end
             s3:begin 
                 i <= i + 1;
@@ -96,7 +96,7 @@ always @(posedge clk) begin
                 if(i == 1) begin 
                     //ce <= 1'b1;
                     //we <= 1'b1;
-                    oe <= 1'b1;
+                    //oe <= 1'b1;
                     wfin <= 1'b1;
                 end 
                 if(i == 2) begin 
@@ -110,16 +110,17 @@ always @(posedge clk) begin
                 i <= 0;
                 //we <= 1'b1;
                 //ce <= 1'b1;
-                oe <= 1'b1;
+                //oe <= 1'b1;
                 //rom_addr <= 32'h00000000;
-                dout <= 16'hxxxx;
+                //dout <= 16'hxxxx;
             end 
         endcase 
     end 
 end
 
+assign oe = 1'b1;
 assign ce = (write_ce == 1'b1 && wfin == 1'b0)?1'b0:1'b1;
 assign we = (write_ce == 1'b1 && wfin == 1'b0)?1'b0:1'b1;
-assign rom_addr = (write_ce == 1'b1 && wfin == 1'b0)?address:32'h00000000;
+assign rom_addr = (write_ce == 1'b1 && wfin == 1'b0)?address:20'h00000000;
 
 endmodule

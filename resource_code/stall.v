@@ -2,8 +2,8 @@ module stall(
     input Jump,
     input jmp_reg,               
     input id_Branch,
-    input zero_sig,
-    input bgtz_sig,
+    (* dont_touch = "1" *)input zero_sig,
+    (* dont_touch = "1" *)input bgtz_sig,
     input ex_RegWrite,
     output reg flush_if_id,
     output reg flush_id_ex,
@@ -13,6 +13,11 @@ module stall(
     //output reg flush_id_ex,
     //output reg flush_ex_memw
 );
+
+always @(*) begin
+    flush_id_ex <= 1'b0;
+    flush_ex_memwb <= 1'b0;
+end
 
 always @(*) begin 
     if (!Jump || jmp_reg) flush_if_id <= 1'b1;

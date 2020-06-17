@@ -1,18 +1,20 @@
 module irom_read(
-    input clk,         //1ns
-    input rst,
-    input read_ce,                 //读使能信号
-    input [31:0] address,
-    input [15:0] dout,
-    output reg [31:0] rom_addr,
-    output reg [15:0] data,
-    output ce,
-    output we,
-    output oe,
+    input wire clk,         //1ns
+    input wire rst,
+    input wire read_ce,                 //读使能信号
+    input wire [31:0] address,
+    input wire [31:0] dout,
+    output wire [19:0] rom_addr,
+    output reg [31:0] data,
+    output wire ce,
+    output wire we,
+    output wire oe,
     output reg rfin               //数据读取完成信号
     //output lb,
     //output ub
 );
+
+assign rom_addr = address;
 
 localparam s0 = 2'b00;
 localparam s1 = 2'b01;
@@ -73,22 +75,24 @@ end
 always @(posedge clk) begin 
     if(rst || !read_ce) begin 
         i <= 2'b0;
-        data <= 16'hxxxx;
+        rfin <= 1'b0;
+        data <= 32'h00000000;
+        //rom_addr <= 32'h00000000;
         state_fin <= 1'b0;
     end 
     else begin 
         case (next_state)
             s0:begin              //准备
                 i <= 2'b0;
-                data <= 16'hxxxx;
+                data <= 32'h00000000;
                 state_fin <= 1'b0;
-                rom_addr <= 32'hxxxxxxxx;
+                //rom_addr <= address;
                 rfin <= 1'b0;
-                data <= 16'hxxxx;
+                data <= 32'h00000000;
             end
             s1:begin
                 if(i < 2'd1) begin
-                    rom_addr <= address;
+                   // rom_addr <= address;
                     i <= i + 1'b1;
                 end 
                 else begin 
@@ -100,25 +104,25 @@ always @(posedge clk) begin
                 i <= 2'b0;
                 state_fin <= 1'b1;
                 data <= dout;
-                rfin <= 1'b1;
+                rfin <= 1'b0;
             end
             s3:begin 
                 data <= dout;
                 i <= i + 1'b1;
                 state_fin <= 1'b1;
-                rfin <= 1'b0;
+                rfin <= 1'b1;
             end
             default:begin 
                 i <= 2'b0;
-                data <= 16'hxxxx;
+                data <= 32'h00000000;
                 state_fin <= 1'b0;
-                rom_addr <= 32'hxxxxxxxx;
+                //rom_addr <= 32'hxxxxxxxx;
                 rfin <= 1'b0;
-                data <= 16'hxxxx;
             end
         endcase 
     end
 end
+
 
 
 endmodule 

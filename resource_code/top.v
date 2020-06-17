@@ -1,57 +1,44 @@
 module top(
-    input clk,
+    input wire clk,
     //input rom_clk,
-    input rst,
+    (* dont_touch = "1" *)input wire rst,
     //drom
-    input [31:0] rom_rdata,
-    output [31:0] drom_addr,
-    output dwrite_ce,
-    output [31:0] wdata,
-    output dread_ce,
-    input rfin_a,
-    input rfin_b,
-    input wfin_a,
-    input wfin_b,
+    input wire [31:0] rom_rdata,
+    output wire [31:0] drom_addr,
+    output wire dwrite_ce,
+    output wire [31:0] wdata,
+    output wire dread_ce,
+    input wire rfin_a,
+    input wire wfin_a,
     //irom
-    output iread_ce,
-    output [31:0] irom_addr,
-    input [31:0] rom_inst,
-    input rfin_c,
-    input rfin_d
-    /*
-    //drom相关信号
-    input [15:0] drom_data_a,
-    input [15:0] drom_data_b,
-    output [31:0] drom_din,         //内存写数据
-    output [31:0] drom_dout,
-    output [31:0] drom_addr,
-    output drom_we,
-    output drom_ce,
-    output drom_oe,
-    //irom相关信号
-    input [15:0] irom_data_a,        //连接到内存芯片Dout
-    input [15:0] irom_data_b,
-    output [31:0] irom_addr,
-    output irom_ce,
-    output irom_we,
-    output irom_oe
-    */
+    output wire iread_ce,
+    output wire [31:0] irom_addr,
+    input wire [31:0] rom_inst,
+    input wire rfin_c,
+    //串口相关
+    output wire [7:0] uart_wdata,
+    output wire uart_write_ce,
+    input wire [7:0] uart_rdata,
+    output wire clean_recv_flag,
+    input wire recv_flag,
+    input wire send_flag
 );
 
 wire ce;
-wire [31:0] inst_address;
-wire [31:0] cur_inst;
+(* dont_touch = "1" *)wire [31:0] inst_address;
+(* dont_touch = "1" *)wire [31:0] cur_inst;
 wire [31:0] next_instaddress;
 wire [5:0] opcode;
 wire [4:0] rreg_a;
 wire [4:0] rreg_b;
 wire [4:0] wreg;
-wire [31:0] imme_num;
+(* dont_touch = "1" *)wire [31:0] imme_num;
 wire [5:0] func;
 wire [3:0] alu_control_sig;
 wire ALU_zerotag;
 wire [4:0] shamt;
-wire bgtz_sig;
+(* dont_touch = "1" *)wire bgtz_sig;
+(* dont_touch = "1" *)wire zero_sig;
 
 //id阶段控制信号
 wire [31:0] jump_address;
@@ -64,12 +51,11 @@ wire MemWrite;
 wire ALUSrc;
 wire RegWrite;
 wire Jump;                    //低电平有效
-wire unsigned_num;           //暂时不用
+//wire unsigned_num;           //暂时不用
 wire equal_branch;
 wire store_pc;
 wire lui_sig;
 wire greater_than;
-wire zero_sig;
 
 //ex阶段控制信号
 wire jmp_reg;                //jr 信号线
@@ -145,12 +131,13 @@ wire [31:0] ex_rdata_b;
 wire [31:0] ex_imme_num;
 wire [5:0] ex_func;
 wire [4:0] ex_shamt;
-wire [5:0] ex_opcode;
+(* dont_touch = "1" *)wire [5:0] ex_opcode;
 wire [31:0] ex_cur_instaddress;
 wire [4:0] ex_wreg;
 wire [4:0] ex_Rs;
 wire [4:0] ex_Rt;
 wire ex_greater_than;
+wire ex_store_pc;
  
 id_ex id_ex(
     .clk(clk),
@@ -211,7 +198,7 @@ wire mem_RegWrite;
 wire [31:0] mem_alu_result;
 wire [31:0] mem_rdata_b;
 wire [5:0] mem_opcode;
-wire [31:0] mem_imme_num;
+(* dont_touch = "1" *)wire [31:0] mem_imme_num;
 wire [4:0] mem_wreg;
 ex_mem ex_mem(
     .clk(clk),
@@ -265,7 +252,7 @@ pc pc(
     .jc_instaddress(jc_instaddress),
     //.id_cur_inst(id_inst),
     //.id_next_instaddress(id_next_instaddress),
-    .jump_address,
+    .jump_address(jump_address),
     .inst_address(inst_address),
     .next_instaddress(next_instaddress),
     .bgtz_sig(bgtz_sig),
@@ -275,7 +262,6 @@ pc pc(
 
 inst_rom inst_rom(
     .clk(clk),
-    .rom_clk(rom_clk),
     .inst_address(inst_address),
     .ce(ce),
     //.data(data),
@@ -283,8 +269,7 @@ inst_rom inst_rom(
     .read_ce(iread_ce),
     .irom_addr(irom_addr),
     .rom_inst(rom_inst),
-    .rfin_c(rfin_c),
-    .rfin_d(rfin_d)
+    .rfin_c(rfin_c)
     /*
     .rdata_a(irom_data_a),
     .rdata_b(irom_data_b),
@@ -306,7 +291,8 @@ id id(
     .imme_num(imme_num),
     .func(func),
     .shamt(shamt),
-    .jmp_reg(jmp_reg)
+    .jmp_reg(jmp_reg),
+    .jump_address(jump_address)
 );
 
 pre_branch pre_branch(
@@ -380,8 +366,8 @@ alu alu(
     .alu_control(alu_control_sig),
     //.zero_sig(ALU_zerotag),
     .alu_result(alu_result),
-    .unsigned_num(unsigned_num),
-    .equal_branch(ex_equal_branch),
+    //.unsigned_num(unsigned_num),
+   // .equal_branch(ex_equal_branch),
     .shamt(ex_shamt)
     //.greater_than(ex_greater_than),
     //.bgtz_sig(bgtz_sig)
@@ -401,7 +387,8 @@ pre_mem pre_mem(
 
 mem mem(
     .clk(clk),
-    .rom_clk(rom_clk),
+    .rst(rst),
+   // .rom_clk(rom_clk),
     .alu_result(mem_alu_result),
     .din(mem_rdata_b),            //来自寄存器堆的第二个读出数据
     .MemWrite(mem_MemWrite),
@@ -410,30 +397,20 @@ mem mem(
     .dout(mem_wdata),
     .mem_sel(mem_sel),
     .lui_sig(mem_lui_sig),
-    //.mem_wreg(mem_wreg),
-    //.mem_RegWrite(mem_RegWrite),
-    //.wb_RegWrite(wb_RegWrite),
-    //.wb_wreg(wb_wreg),
     .imme(mem_imme_num),            //来自id阶段的立即数
-    /*
-    .rom_data_a(drom_data_a),
-    .rom_data_b(drom_data_b),
-    .rom_din(drom_din),
-    .rom_dout(drom_dout),
-    .rom_addr(drom_addr),
-    .we(drom_we),
-    .ce(drom_ce),                   //pc阶段有同名线
-    .oe(drom_oe) 
-    */
     .drom_addr(drom_addr),
     .write_ce(dwrite_ce),
     .wdata(wdata),
     .read_ce(dread_ce),
     .rom_rdata(rom_rdata),
     .wfin_a(wfin_a),
-    .wfin_b(wfin_b),
     .rfin_a(rfin_a),
-    .rfin_b(rfin_b)
+    .uart_wdata(uart_wdata),
+    .uart_write_ce(uart_write_ce),
+    .uart_rdata(uart_rdata),
+    .clean_recv_flag(clean_recv_flag),
+    .recv_flag(recv_flag),
+    .send_flag(send_flag)
 );
 
 redirect redirect(

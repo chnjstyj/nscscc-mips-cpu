@@ -1,59 +1,36 @@
     module mem(                   //使用小端模式
     input clk,
-    input rst,
-    input rom_clk,
+    (* dont_touch = "1" *)input rst,
+    //input rom_clk,
     input [31:0] alu_result,
     input [31:0] din,
-    input [31:0] imme,
+    (* dont_touch = "1" *)input [31:0] imme,
     input MemWrite,
     input MemRead,
     input MemtoReg,
     input [1:0] mem_sel,
     input lui_sig,
-    //input [4:0] mem_wreg,
-    //input mem_RegWrite,
-    //output reg wb_RegWrite,
-    //output reg [4:0] wb_wreg,
-    /*
-    input [15:0] rom_data_a,
-    input [15:0] rom_data_b,
-    output [31:0] rom_din,         //内存写数据
-    output [31:0] rom_dout,
-    output [31:0] rom_addr,
-    output we,
-    output ce,
-    output oe,
-    output reg [31:0] dout*/
-    output drom_addr,
+    output reg [31:0] dout,
+    output reg [31:0] drom_addr,
     output reg write_ce,
     output reg [31:0] wdata,
-    output reg read_ce,
+    (* dont_touch = "1" *)output reg read_ce,
     input [31:0] rom_rdata,
     input wfin_a,
-    input wfin_b,
     input rfin_a,
-    input rfin_b
+    //串口相关
+    output reg [7:0] uart_wdata,
+    output reg uart_write_ce,
+    input [7:0] uart_rdata,
+    (* dont_touch = "1" *)output reg clean_recv_flag,
+    input recv_flag,
+    input send_flag
 );
+wire [31:0] drom_address;
 
-assign drom_addr = {2'b00,alu_result[31:2]};
-/*
-//读写内存相关
-reg [31:0] wdata;
-reg write_ce;
-reg read_ce;
-wire wfin_a;
-wire wfin_b;
-wire rfin_a;
-wire rfin_b;
-wire [31:0] rom_rdata;
-
-
-
-reg [7:0] ram_a[0:1023];
-reg [7:0] ram_b[0:1023];
-reg [7:0] ram_c[0:1023];
-reg [7:0] ram_d[0:1023];*/
-reg [31:0] data_out;
+always @(*)  drom_addr <= {5'b00000,alu_result[28:2]};
+assign drom_address = drom_addr;
+(* dont_touch = "1" *)reg [31:0] data_out;
 /*
 always @(posedge clk) begin 
     wb_wreg <= mem_wreg;
@@ -106,46 +83,68 @@ always @(posedge clk) begin
 end
 */
 //写数据到内存
-always @(*) begin 
-    if(MemWrite) begin 
-        write_ce <= 1'b1;
+always @(posedge clk or posedge wfin_a) begin 
+    if(MemWrite && drom_address != 32'h7f400fe) begin 
         case (mem_sel)
-            2'b00:write_ce <= 1'b0;
+            2'b00:wdata <= 32'h00000000;
             2'b01:wdata <= {24'h000000,din[7:0]};
             2'b10:wdata <= {16'h0000,din[15:0]};
             2'b11:wdata <= din;
-            default:write_ce <= 1'b0;
+            default:wdata <= 32'h00000000;
         endcase
-        if(wfin_a && wfin_b) begin
-            //write_ce <= 1'b0;
-            wdata <= 32'hzzzzzzzz;
+        if(wfin_a) begin
+            write_ce <= 1'b0;
+            //wdata <= 32'hzzzzzzzz;
         end 
         else begin 
             write_ce <= 1'b1;
         end 
-    end 
+    end
+    else if(MemWrite && drom_address == 32'h7f400fe) begin 
+        uart_wdata <= din[7:0];
+        write_ce <= 1'b0;
+        uart_write_ce <= 1'b1;
+    end
     else begin 
+        uart_write_ce <= 1'b0;
         write_ce <= 1'b0;
         wdata <= 32'hzzzzzzzz;
+        uart_wdata <= 8'h00;
     end 
 end 
 //从内存读数据
 always @(*) begin 
     if(MemRead) begin 
-        read_ce <= 1'b1;
-        if(rfin_a && rfin_b) begin 
-            case(mem_sel)
-            2'b00:data_out <= 32'hzzzzzzzz;
-            2'b01:data_out <= {24'h000000,rom_rdata[7:0]};
-            2'b10:data_out <= {16'h0000,rom_rdata[15:0]};
-            2'b11:data_out <= rom_rdata;
-            default:data_out <= 32'hzzzzzzzz;
-            endcase 
+        case (drom_addr)
+        32'h7f400fe:begin        //读串口的数据  清除接收标志位
+            data_out <= {24'h000000,uart_rdata};
+            clean_recv_flag <= 1'b1;
         end
-        else 
-        data_out <= data_out;
+        32'h7f400ff:begin        //读标志位
+            data_out <= {24'h00000000,recv_flag,send_flag};
+            clean_recv_flag <= 1'b0;
+        end
+        default:begin
+            clean_recv_flag <= 1'b0;
+            if(rfin_a) begin
+                read_ce <= 1'b0; 
+                case(mem_sel)
+                2'b00:data_out <= 32'hzzzzzzzz;
+                2'b01:data_out <= {24'h000000,rom_rdata[7:0]};
+                2'b10:data_out <= {16'h0000,rom_rdata[15:0]};
+                2'b11:data_out <= rom_rdata;
+                default:data_out <= rom_rdata;
+                endcase 
+            end
+            else begin
+                data_out <= data_out;
+                read_ce <= 1'b1;
+            end
+        end
+        endcase
     end
     else begin 
+        clean_recv_flag <= 1'b0;
         read_ce <= 1'b0;
         data_out <= 32'hzzzzzzzz;
     end
@@ -160,6 +159,7 @@ always @(*) begin
         dout <= alu_result;
     else if (lui_sig == 1'b1)
         dout <= {{imme[15:0]},16'b0};
+     else dout <= 32'h0;
 end
 /*
 rom_write rom_write_a(

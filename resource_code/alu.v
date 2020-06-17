@@ -4,8 +4,8 @@ module alu(
     input [31:0] imme,
     input ALUSrc,
     input [3:0] alu_control,
-    input unsigned_num,
-    input equal_branch,
+    //input unsigned_num,
+    //input equal_branch,
     input [4:0] shamt,
     //input greater_than,
     //output reg zero_sig
@@ -34,7 +34,7 @@ assign sll_result = real_data_b << shamt;
 assign srl_result = real_data_b >>> shamt;
 
 
-always @(alu_control or data_a or real_data_b) begin 
+always @(*) begin 
     case (alu_control)
         4'b0010:alu_result <= add_result;
         4'b0110:alu_result <= sub_result;
