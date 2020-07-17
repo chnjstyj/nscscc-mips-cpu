@@ -1,6 +1,7 @@
 module ex_mem(
     input clk,
     input rst,
+    input stall_ex_memwb,
     input ex_lui_sig,
     input ex_MemRead,
     input ex_MemWrite,
@@ -9,7 +10,7 @@ module ex_mem(
     input [31:0] ex_alu_result,
     input [31:0] ex_rdata_b,
     input [5:0] ex_opcode,
-    input [31:0] ex_imme_num,
+    input [15:0] ex_imme_num,
     input [4:0] ex_wreg,
     output reg mem_lui_sig,
     output reg mem_MemRead,
@@ -19,11 +20,11 @@ module ex_mem(
     output reg [31:0] mem_alu_result,
     output reg [31:0] mem_rdata_b,
     output reg [5:0] mem_opcode,
-    output reg [31:0] mem_imme_num,
+    output reg [15:0] mem_imme_num,
     output reg [4:0] mem_wreg
 );
 
-always @(posedge clk) begin 
+always @(posedge clk or posedge rst) begin 
         if(rst == 1'b1) begin 
             mem_lui_sig <= 1'b0;
             mem_MemRead <= 1'b0;
@@ -36,7 +37,7 @@ always @(posedge clk) begin
             mem_imme_num <= 32'h00000000;
             mem_wreg <= 5'b00000;
         end 
-        else begin 
+        else if (stall_ex_memwb == 1'b0) begin 
             mem_lui_sig <= ex_lui_sig;
             mem_MemRead <= ex_MemRead;
             mem_MemWrite <= ex_MemWrite;

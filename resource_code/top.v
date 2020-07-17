@@ -2,19 +2,20 @@ module top(
     input wire clk,
     //input rom_clk,
     (* dont_touch = "1" *)input wire rst,
+    output wire ce,
+    input wire stall_mem,
     //drom
-    input wire [31:0] rom_rdata,
-    output wire [31:0] drom_addr,
+    input wire [31:0] ram_rdata,
+    output wire [31:0] dram_write_addr,
+    output wire [31:0] dram_read_addr,
     output wire dwrite_ce,
     output wire [31:0] wdata,
     output wire dread_ce,
-    input wire rfin_a,
-    input wire wfin_a,
     //irom
     output wire iread_ce,
-    output wire [31:0] irom_addr,
-    input wire [31:0] rom_inst,
-    input wire rfin_c,
+    output wire [31:0] iram_addr,
+    input wire [31:0] ram_inst,
+    input wire irom_fin,
     //串口相关
     output wire [7:0] uart_wdata,
     output wire uart_write_ce,
@@ -23,8 +24,11 @@ module top(
     input wire recv_flag,
     input wire send_flag
 );
+//ILA
+wire [31:0] rs;
+wire [31:0] rt;
 
-wire ce;
+//wire ce;
 (* dont_touch = "1" *)wire [31:0] inst_address;
 (* dont_touch = "1" *)wire [31:0] cur_inst;
 wire [31:0] next_instaddress;
@@ -32,13 +36,15 @@ wire [5:0] opcode;
 wire [4:0] rreg_a;
 wire [4:0] rreg_b;
 wire [4:0] wreg;
-(* dont_touch = "1" *)wire [31:0] imme_num;
+wire [15:0] imme_num;
 wire [5:0] func;
 wire [3:0] alu_control_sig;
 wire ALU_zerotag;
 wire [4:0] shamt;
 (* dont_touch = "1" *)wire bgtz_sig;
-(* dont_touch = "1" *)wire zero_sig;
+//(* dont_touch = "1" *)wire zero_sig;
+wire Ebranch;
+wire stall_pc_flush_if_id;
 
 //id阶段控制信号
 wire [31:0] jump_address;
@@ -68,8 +74,8 @@ wire [31:0] rdata_a;
 wire [31:0] rdata_b;
 
 //branch输入
-wire [31:0] pr_rdata_a;
-wire [31:0] pr_rdata_b;
+//wire [31:0] pr_rdata_a;
+//wire [31:0] pr_rdata_b;
 
 //alu输入
 wire [31:0] alu_rdata_a;
@@ -81,6 +87,9 @@ wire [31:0] alu_result;
 //储存器片选信号
 wire [1:0] mem_sel;
 
+//储存器延迟
+wire stall_dram;
+
 //储存器读出数据 //寄存器写入地址 寄存器写入信号
 wire [31:0] mem_wdata;
 /*wire [4:0] wb_wreg;
@@ -89,6 +98,7 @@ wire wb_RegWrite;*/
 //旁路相关连线
 wire control_rdata_a;
 wire control_rdata_b;
+wire [31:0] Rrs;
 
 //流水线气泡模块连线
 wire flush_if_id;
@@ -96,6 +106,8 @@ wire flush_id_ex;
 wire flush_ex_memwb;
 wire stall_pc;
 wire stall_if_id;
+wire stall_id_ex;
+wire stall_ex_memwb;
 
 //流水线相关模块与连线
 //if_id
@@ -128,7 +140,7 @@ wire ex_lui_sig;
 wire [31:0] ex_next_instaddress;
 wire [31:0] ex_rdata_a;
 wire [31:0] ex_rdata_b;
-wire [31:0] ex_imme_num;
+wire [15:0] ex_imme_num;
 wire [5:0] ex_func;
 wire [4:0] ex_shamt;
 (* dont_touch = "1" *)wire [5:0] ex_opcode;
@@ -138,11 +150,14 @@ wire [4:0] ex_Rs;
 wire [4:0] ex_Rt;
 wire ex_greater_than;
 wire ex_store_pc;
+wire ex_Ebranch;
+wire [31:0] ex_jc_instaddress;
  
 id_ex id_ex(
     .clk(clk),
     .rst(rst),
     .flush_id_ex(flush_id_ex),
+    .stall_id_ex(stall_id_ex),
     //.id_Branch(Branch),
     .id_MemRead(MemRead),
     .id_MemtoReg(MemtoReg),
@@ -165,6 +180,9 @@ id_ex id_ex(
     .id_Rs(rreg_a),
     .id_Rt(rreg_b),
     .id_greater_than(greater_than),
+    //.id_Ebranch(Ebranch),
+    //.id_jc_instaddress(jc_instaddress),
+   // .ex_jc_instaddress(ex_jc_instaddress),
    // .ex_Branch(ex_Branch),
     .ex_MemRead(ex_MemRead),
     .ex_MemtoReg(ex_MemtoReg),
@@ -187,6 +205,7 @@ id_ex id_ex(
     .ex_Rs(ex_Rs),
     .ex_Rt(ex_Rt),
     .ex_greater_than(ex_greater_than)
+    //.ex_Ebranch(ex_Ebranch)
 );
 
 //ex_mem
@@ -198,11 +217,12 @@ wire mem_RegWrite;
 wire [31:0] mem_alu_result;
 wire [31:0] mem_rdata_b;
 wire [5:0] mem_opcode;
-(* dont_touch = "1" *)wire [31:0] mem_imme_num;
+wire [15:0] mem_imme_num;
 wire [4:0] mem_wreg;
 ex_mem ex_mem(
     .clk(clk),
     .rst(rst),
+    .stall_ex_memwb(stall_ex_memwb),
     .ex_lui_sig(ex_lui_sig),
     .ex_MemRead(ex_MemRead),
     .ex_MemWrite(ex_MemWrite),
@@ -227,28 +247,34 @@ ex_mem ex_mem(
 
 //流水线气泡模块
 stall stall(
+    .stall_mem(stall_mem),
+    .stall_dram(stall_dram),
+    .stall_pc_flush_if_id(stall_pc_flush_if_id),
     .Jump(Jump),
     .jmp_reg(jmp_reg),
     .id_Branch(Branch),
-    .zero_sig(zero_sig),
+    //.zero_sig(zero_sig),
     .bgtz_sig(bgtz_sig),
     .ex_RegWrite(ex_RegWrite),
     .flush_if_id(flush_if_id),
     .flush_id_ex(flush_id_ex),
     .flush_ex_memwb(flush_ex_memwb),
     .stall_pc(stall_pc),
-    .stall_if_id(stall_if_id)
+    .stall_if_id(stall_if_id),
+    .stall_id_ex(stall_id_ex),
+    .stall_ex_memwb(stall_ex_memwb)
 );
 
 pc pc(
     .clk(clk),
     .rst(rst),
-    .Branch(Branch),
-    .zero_sig(zero_sig),
+    //.Branch(Branch),
+    //.zero_sig(zero_sig),
+    .Ebranch(Ebranch),
     .Jump(Jump),
     .imme(imme_num),
     .jmp_reg(jmp_reg),
-    .Rrs(ex_rdata_a),                
+    .Rrs(Rrs),                
     .jc_instaddress(jc_instaddress),
     //.id_cur_inst(id_inst),
     //.id_next_instaddress(id_next_instaddress),
@@ -261,28 +287,20 @@ pc pc(
 );
 
 inst_rom inst_rom(
-    .clk(clk),
     .inst_address(inst_address),
-    .ce(ce),
+    .rst(rst),
+    .stall_pc_flush_if_id(stall_pc_flush_if_id),
     //.data(data),
     .inst(cur_inst),
     .read_ce(iread_ce),
-    .irom_addr(irom_addr),
-    .rom_inst(rom_inst),
-    .rfin_c(rfin_c)
-    /*
-    .rdata_a(irom_data_a),
-    .rdata_b(irom_data_b),
-    .rom_addr(irom_addr),
-    .rom_ce(irom_ce),
-    .we(irom_we),
-    .oe(irom_oe)
-    */
+    .irom_addr(iram_addr),
+    .ram_inst(ram_inst),
+    .irom_fin(irom_fin)
 );
 
 id id(
     .inst(id_inst),
-    .next_instaddress(id_next_instaddress[31:28]),
+    .next_instaddress(id_next_instaddress),
     .RegDst(RegDst),
     .opcode(opcode),
     .rreg_a(rreg_a),
@@ -294,7 +312,7 @@ id id(
     .jmp_reg(jmp_reg),
     .jump_address(jump_address)
 );
-
+/*
 pre_branch pre_branch(
     .id_rdata_a(rdata_a),
     .id_rdata_b(rdata_b),
@@ -308,17 +326,14 @@ pre_branch pre_branch(
 branch branch(
     .next_instaddress(id_next_instaddress),          //来自id_ex
     .imme(imme_num),
-    .rdata_a(pr_rdata_a),
-    .rdata_b(pr_rdata_b),
     .greater_than(greater_than),
-    .equal_branch(equal_branch),
     .bgtz_sig(bgtz_sig),
-    .zero_sig(zero_sig),
     .jc_instaddress(jc_instaddress)
-);
+);*/
 
 opcode_control opcode_control(
     .opcode(opcode),
+    .rst(rst),
     .RegDst(RegDst),
     .Branch(Branch),
     .MemRead(MemRead),
@@ -337,6 +352,9 @@ opcode_control opcode_control(
 regs regs(
     .clk(clk),
     .rst(rst),
+    //.t0(t0),
+    //.k0(k0),
+    //.k1(k1),
     .rreg_a(rreg_a),
     .rreg_b(rreg_b),
     .wreg(mem_wreg),
@@ -345,7 +363,18 @@ regs regs(
     .rdata_a(rdata_a),
     .rdata_b(rdata_b),
     .inst_address(ex_cur_instaddress),
-    .store_pc(ex_store_pc)
+    .store_pc(ex_store_pc),
+    .next_instaddress(id_next_instaddress),          //来自if_id
+    .imme(imme_num),                                 //
+    .greater_than(greater_than),
+    .equal_branch(equal_branch),
+    .bgtz_sig(bgtz_sig),
+    //.zero_sig(zero_sig),
+    .Branch(Branch),
+    .Ebranch(Ebranch),
+    .jc_instaddress(jc_instaddress),
+    .reg_rs(rs),
+    .reg_rt(rt)
 );
 
 pre_alu pre_alu(
@@ -361,7 +390,7 @@ pre_alu pre_alu(
 alu alu(
     .data_a(alu_rdata_a),
     .data_b(alu_rdata_b),
-    .imme(ex_imme_num),
+    .imme(ex_imme_num),                           //有符号扩展 无符号扩展
     .ALUSrc(ex_ALUSrc),
     .alu_control(alu_control_sig),
     //.zero_sig(ALU_zerotag),
@@ -376,7 +405,6 @@ alu alu(
 alu_control alu_control(
     .func(ex_func),
     .ALUOp(ex_ALUOp),
-    .opcode(ex_opcode),
     .alu_control(alu_control_sig)
 );
 
@@ -388,7 +416,7 @@ pre_mem pre_mem(
 mem mem(
     .clk(clk),
     .rst(rst),
-   // .rom_clk(rom_clk),
+    .stall_dram(stall_dram),
     .alu_result(mem_alu_result),
     .din(mem_rdata_b),            //来自寄存器堆的第二个读出数据
     .MemWrite(mem_MemWrite),
@@ -398,13 +426,12 @@ mem mem(
     .mem_sel(mem_sel),
     .lui_sig(mem_lui_sig),
     .imme(mem_imme_num),            //来自id阶段的立即数
-    .drom_addr(drom_addr),
+    .dram_read_addr(dram_read_addr),
+    .dram_write_addr(dram_write_addr),
     .write_ce(dwrite_ce),
     .wdata(wdata),
     .read_ce(dread_ce),
-    .rom_rdata(rom_rdata),
-    .wfin_a(wfin_a),
-    .rfin_a(rfin_a),
+    .ram_rdata(ram_rdata),
     .uart_wdata(uart_wdata),
     .uart_write_ce(uart_write_ce),
     .uart_rdata(uart_rdata),
@@ -419,12 +446,21 @@ redirect redirect(
     .mem_wb_wreg(mem_wreg),
     .mem_wb_RegWrite(mem_RegWrite),
     .control_rdata_a(control_rdata_a),
-    .control_rdata_b(control_rdata_b)
+    .control_rdata_b(control_rdata_b),
+    .ex_alu_result(alu_result),
+    .ex_RegWrite(ex_RegWrite),
+    .ex_wreg(ex_wreg),
+    .id_rreg_a(rreg_a),
+    .id_jmp_reg(jmp_reg),
+    .id_rdata_a(rdata_a),
+    .Rrs(Rrs)
 );
 /*
-always @(*) begin 
-    if (inst_address == 32'h00000000) data <= 32'h34010001;
-    else if (inst_address == 32'h00000004) data <= 32'h34020001;
-end*/
+ila_0 u_ila(
+    .clk(clk),
+    .probe0(id_cur_instaddress),
+    .probe1(id_inst)
+    );*/
+
 
 endmodule

@@ -1,7 +1,7 @@
 module alu(
     input [31:0] data_a,
     input [31:0] data_b,
-    input [31:0] imme,
+    input [15:0] imme,
     input ALUSrc,
     input [3:0] alu_control,
     //input unsigned_num,
@@ -13,8 +13,15 @@ module alu(
     //output reg bgtz_sig                       //bgtz –≈∫≈œﬂ
 );
 
+wire [31:0] zero_extimm;
+wire [31:0] sign_extimm;
+reg [31:0] real_imme;
+
+assign zero_extimm = {{16{1'b0}},imme};
+assign sign_extimm = {{16{imme[15]}},imme};
+
 wire [31:0] real_data_b;
-//?????®¢??
+
 wire [31:0] add_result;
 wire [31:0] sub_result;
 wire [31:0] and_result;
@@ -29,12 +36,12 @@ assign sub_result = data_a - real_data_b;
 assign and_result = data_a & real_data_b;
 assign or_result = data_a | real_data_b;
 assign lessthan_result = (data_a < real_data_b?32'b1:32'b0);
-assign xor_result = ~(data_a | real_data_b);
+assign xor_result = data_a ^ real_data_b;
 assign sll_result = real_data_b << shamt;
 assign srl_result = real_data_b >>> shamt;
 
 
-always @(*) begin 
+always @(*) begin
     case (alu_control)
         4'b0010:alu_result <= add_result;
         4'b0110:alu_result <= sub_result;
@@ -48,7 +55,13 @@ always @(*) begin
     endcase
 end
 
-assign real_data_b = (ALUSrc == 1'b1)?imme:data_b;                  
+always @(*) begin
+    if (alu_control == 4'b0000 || alu_control == 4'b0001 || alu_control == 4'b1100) begin 
+        real_imme <= zero_extimm;
+    end
+    else real_imme <= sign_extimm;
+end
+assign real_data_b = (ALUSrc == 1'b1)?real_imme:data_b;                  
 
 /*always @(*) begin
     if(equal_branch) begin  

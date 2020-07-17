@@ -3,7 +3,7 @@ module drom_read(
     input clk,         //2ns
     input rst,
     input read_ce,                 //读使能信号
-    input [31:0] address,
+    input [19:0] address,
     input [31:0] dout,
     output [19:0] rom_addr,
     output reg [31:0] data,
@@ -26,7 +26,7 @@ localparam s3 = 2'b10;
 reg [1:0] next_state;
 reg state_fin;
 
-always @(posedge clk) begin 
+always @(posedge clk or posedge rst) begin 
     if (rst) begin 
         cur_state <= s0;
     end
@@ -69,7 +69,7 @@ end
 
 
 
-always @(posedge clk) begin
+always @(posedge clk or posedge rst) begin
     if (rst) begin
         i <= 2'd0;
         data <= 32'h00000000;
@@ -81,13 +81,13 @@ always @(posedge clk) begin
     else begin 
         case (next_state)
             s0:begin           //准备
-            i <= 2'd0;
-            data <= 32'h00000000;
-            ce <= 1'b1;
-            oe <= 1'b1;
-            //rom_addr <= 16'h0000;
-            rfin <= 1'b0;
-            state_fin <= 1'b0;
+                i <= 2'd0;
+                data <= 32'h00000000;
+                ce <= 1'b1;
+                oe <= 1'b1;
+                //rom_addr <= 16'h0000;
+                rfin <= 1'b0;
+                state_fin <= 1'b0;
             end 
             s1:begin          //延时2ns,oe&ce拉低
                     //rom_addr <= address;
@@ -113,7 +113,7 @@ always @(posedge clk) begin
                     oe <= 1'b0;
                     ce <= 1'b0;
                     i <= i + 1;
-                    rfin <= 1'b1;
+                    rfin <= 1'b0;
                 end
                 else begin 
                     //rfin <= 1'b1;
@@ -121,7 +121,7 @@ always @(posedge clk) begin
                     ce <= 1'b1;
                     state_fin <= 1'b1;
                     i <= 2'd0;
-                    rfin <= 1'b0;
+                    rfin <= 1'b1;
                 end 
             end
             default:begin 

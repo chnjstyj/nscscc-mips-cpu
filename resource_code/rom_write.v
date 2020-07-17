@@ -22,7 +22,7 @@ reg [1:0] next_state;
 reg state_fin;
 integer i;
 
-always @(posedge clk) begin
+always @(posedge clk or posedge rst) begin
     if (rst) begin 
         cur_state <= s0;
     end 
@@ -53,54 +53,35 @@ always @(*) begin
 end
 
 
-always @(posedge clk) begin 
+always @(posedge clk or posedge rst) begin 
     if (rst) begin
         i <= 0;
-        //we <= 1'b1;
-        //ce <= 1'b1;
-        //oe <= 1'b1;
-        //rom_addr <= 32'h00000000;
-        //dout <= 16'hxxxx;
         wfin <= 1'b0;
+        state_fin <= 1'b0;
     end 
     else begin 
         case (next_state)
             s0:begin 
                 state_fin <= 1'b0;
                 i <= 0;
-                //we <= 1'b1;
-                //ce <= 1'b1;
-                //oe <= 1'b1;
-                //rom_addr <= 32'h00000000;
                 wfin <= 1'b0;
-                //dout <= 16'hxxxx;
             end
-            s1:begin 
-                    //rom_addr <= address;
-                    //state_fin <= 1'b0;
-                    //ce <= 1'b0;
-                    //we <= 1'b0;
+            s1:begin
                     state_fin <= 1'b1;
                     i <= 0;
-                    //dout <= 16'hzzzz;
             end  
             s2:begin 
                 state_fin <= 1'b1;
                 i <= 0;
-                //dout <= 16'hzzzz;
             end
             s3:begin 
                 i <= i + 1;
                 state_fin <= 1'b0;
                 din <= wdata;
                 if(i == 1) begin 
-                    //ce <= 1'b1;
-                    //we <= 1'b1;
-                    //oe <= 1'b1;
                     wfin <= 1'b1;
                 end 
                 if(i == 2) begin 
-                    //dout <= 16'hxxxx;
                     state_fin <= 1'b1;
                     i <= 0;
                     wfin <= 1'b0;
@@ -108,11 +89,6 @@ always @(posedge clk) begin
             end 
             default:begin 
                 i <= 0;
-                //we <= 1'b1;
-                //ce <= 1'b1;
-                //oe <= 1'b1;
-                //rom_addr <= 32'h00000000;
-                //dout <= 16'hxxxx;
             end 
         endcase 
     end 

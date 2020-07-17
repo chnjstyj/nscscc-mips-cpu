@@ -1,24 +1,30 @@
 module opcode_control(
     input [5:0] opcode,
-    output RegDst,          //regs
-    output Branch,          //if
-    output MemRead,         //mem
-    output MemtoReg,        //wb
-    output [3:0] ALUOp,     //ex
-    output MemWrite,        //mem
-    output ALUSrc,          //ex
-    output RegWrite,        //wb
-    output Jump,            //if        //低电平有效
-    output equal_branch,    //ex
-    output store_pc,        //ex        //连接到reg中
-    output lui_sig,          //mem       //lui指令信号,连接到mem中
-    output greater_than
+    input rst,
+    output reg RegDst,          //regs
+    output reg Branch,          //if
+    output reg MemRead,         //mem
+    output reg MemtoReg,        //wb
+    output reg [3:0] ALUOp,     //ex
+    output reg MemWrite,        //mem
+    output reg ALUSrc,          //ex
+    output reg RegWrite,        //wb
+    output reg Jump,            //if        //低电平有效
+    output reg equal_branch,    //ex
+    output wire store_pc,        //ex        //连接到reg中
+    output wire lui_sig,          //mem       //lui指令信号,连接到mem中
+    output wire greater_than
 );
 
 reg [12:0] control_sig;
 
-assign {equal_branch,Jump,RegDst,ALUSrc,MemtoReg,RegWrite,MemRead,MemWrite,Branch,ALUOp} 
-    = control_sig;
+always @(*) begin 
+    if (rst == 1'b1) {equal_branch,Jump,RegDst,ALUSrc,MemtoReg,RegWrite,MemRead,MemWrite,Branch,ALUOp} <= 16'h4000;
+    else 
+        {equal_branch,Jump,RegDst,ALUSrc,MemtoReg,RegWrite,MemRead,MemWrite,Branch,ALUOp} <= control_sig;
+end
+/*assign {equal_branch,Jump,RegDst,ALUSrc,MemtoReg,RegWrite,MemRead,MemWrite,Branch,ALUOp} 
+    = control_sig;*/
 
 always @(*) begin
    case (opcode)
@@ -37,11 +43,13 @@ always @(*) begin
        6'h3: control_sig <= 13'b1000000000000;            //jal
        6'h24: control_sig <= 13'b1101111000000;           //lbu
        6'h25: control_sig <= 13'b1101111000000;           //lhu
-       6'hf: control_sig <= 13'b1101111000000;            //lui
+       6'hf: control_sig <= 13'b1101110000000;            //lui
        6'ha: control_sig <= 13'b1101010000101;            //slti
        6'hb: control_sig <= 13'b1101010000101;            //sltiu
        6'h7: control_sig <= 13'b1101000010001;            //bgtz
        6'he: control_sig <= 13'b1111010000110;            //xori
+       6'h20: control_sig <= 13'b1101111000000;            //lb
+       //6'h28: control_sig <= 13'b1100000010110;            //sb
        default: control_sig <= 13'b1100000000000;
    endcase 
 end

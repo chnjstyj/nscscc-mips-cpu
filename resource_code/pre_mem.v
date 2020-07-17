@@ -12,6 +12,7 @@ always @(*) begin
         6'h24: mem_sel <= 2'b01;       //lbu
         6'h25: mem_sel <= 2'b10;       //lhu
         6'h23: mem_sel <= 2'b11;       //lw
+        6'h20: mem_sel <= 2'b01;       //lb
         default:mem_sel <= 2'b11;
     endcase
 end

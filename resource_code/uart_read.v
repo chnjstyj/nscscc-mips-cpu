@@ -20,7 +20,7 @@ reg [7:0] t_data;
 
 //assign dout = t_data;
 
-always @(posedge clk) begin 
+always @(posedge clk or posedge rst) begin 
     if(rst)
         cur_state <= s0;
     else 
@@ -49,7 +49,7 @@ always @(*) begin
     endcase
 end
 
-always @(posedge clk) begin 
+always @(posedge clk or posedge rst) begin 
     if(rst) begin 
         state_fin <= 1'b0;
         rfin <= 1'b0;
@@ -61,7 +61,7 @@ always @(posedge clk) begin
         case(next_state)
             s0:begin 
                 //dout <= 8'h00;
-                //rfin <= 1'b0;
+                rfin <= 1'b0;
                 t_data <= 8'h00;
             end 
             s1:begin 

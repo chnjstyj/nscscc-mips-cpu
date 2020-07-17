@@ -1,11 +1,11 @@
 module irom_read(
-    input wire clk,         //1ns
+    input wire clk,         //2ns
     input wire rst,
     input wire read_ce,                 //读使能信号
-    input wire [31:0] address,
+    input wire [19:0] address,
     input wire [31:0] dout,
     output wire [19:0] rom_addr,
-    output reg [31:0] data,
+    output wire [31:0] data,
     output wire ce,
     output wire we,
     output wire oe,
@@ -15,6 +15,7 @@ module irom_read(
 );
 
 assign rom_addr = address;
+assign data = (rst == 1'b1)?32'h00000000:dout;
 
 localparam s0 = 2'b00;
 localparam s1 = 2'b01;
@@ -31,8 +32,8 @@ assign we = 1'b1;
 assign ce = 1'b0;
 assign oe = 1'b0;
 
-always @(posedge clk) begin 
-    if (rst || !read_ce) begin 
+always @(posedge clk or posedge rst) begin 
+    if (rst) begin 
         cur_state <= s0;
     end
     else begin 
@@ -61,7 +62,10 @@ always @(*) begin
             else next_state <= s2;
         end
         s3:begin 
-            if (state_fin) begin 
+            if (state_fin && read_ce == 1'b1) begin 
+                next_state <= s1;
+            end
+            else if (state_fin && read_ce == 1'b0) begin
                 next_state <= s0;
             end
             else next_state <= s3;
@@ -72,11 +76,11 @@ always @(*) begin
     endcase
 end
 
-always @(posedge clk) begin 
-    if(rst || !read_ce) begin 
+always @(posedge clk or posedge rst) begin 
+    if(rst) begin 
         i <= 2'b0;
         rfin <= 1'b0;
-        data <= 32'h00000000;
+        //data <= 32'h00000000;
         //rom_addr <= 32'h00000000;
         state_fin <= 1'b0;
     end 
@@ -84,11 +88,10 @@ always @(posedge clk) begin
         case (next_state)
             s0:begin              //准备
                 i <= 2'b0;
-                data <= 32'h00000000;
+                //data <= 32'h00000000;
                 state_fin <= 1'b0;
                 //rom_addr <= address;
                 rfin <= 1'b0;
-                data <= 32'h00000000;
             end
             s1:begin
                 if(i < 2'd1) begin
@@ -103,18 +106,18 @@ always @(posedge clk) begin
             s2:begin 
                 i <= 2'b0;
                 state_fin <= 1'b1;
-                data <= dout;
-                rfin <= 1'b0;
+                //data <= dout;
+                rfin <= 1'b1;
             end
             s3:begin 
-                data <= dout;
+                //data <= dout;
                 i <= i + 1'b1;
                 state_fin <= 1'b1;
-                rfin <= 1'b1;
+                rfin <= 1'b0;
             end
             default:begin 
                 i <= 2'b0;
-                data <= 32'h00000000;
+                //data <= 32'h00000000;
                 state_fin <= 1'b0;
                 //rom_addr <= 32'hxxxxxxxx;
                 rfin <= 1'b0;
