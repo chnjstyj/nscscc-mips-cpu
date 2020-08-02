@@ -5,7 +5,8 @@ module stall(
     input Jump,
     input jmp_reg,               
     input id_Branch,
-   // (* dont_touch = "1" *)input zero_sig,
+    input mem_read_ce,
+    input mem_write_ce,
     (* dont_touch = "1" *)input bgtz_sig,
     input stall_pc_flush_if_id,
     input ex_RegWrite,
@@ -16,24 +17,9 @@ module stall(
     output reg stall_if_id,
     output reg stall_id_ex,
     output reg stall_ex_memwb
-    //output reg flush_id_ex,
-    //output reg flush_ex_memw
 );
-/*
-always @(*) begin
-    flush_id_ex <= 1'b0;
-    flush_ex_memwb <= 1'b0;
-end
-*/
-/*
-assign flush_if_id = !Jump || jmp_reg;
-assign flush_id_ex = 1'b0;
-assign flush_ex_memwb = 1'b0;
-assign stall_pc = (id_Branch && ex_RegWrite) || stall_mem;
-assign stall_if_id = (id_Branch && ex_RegWrite) || stall_mem;
-assign stall_id_ex = stall_mem;
-assign stall_ex_memwb = stall_mem;*/
-
+wire mem_crash;
+assign mem_crash = mem_read_ce && mem_write_ce;
 
 always @(*) begin 
     if (rst == 1'b1) begin 
@@ -48,37 +34,16 @@ always @(*) begin
     else begin 
         if (!Jump || jmp_reg || stall_pc_flush_if_id) flush_if_id <= 1'b1;
         else flush_if_id <= 1'b0;
-        if ((id_Branch && ex_RegWrite)||stall_mem||stall_pc_flush_if_id||stall_dram) stall_pc <= 1'b1;
+        if ((id_Branch && ex_RegWrite)||stall_mem||stall_pc_flush_if_id||stall_dram||mem_crash) stall_pc <= 1'b1;
         else stall_pc <= 1'b0;
-        if ((id_Branch && ex_RegWrite)||stall_mem||stall_dram) stall_if_id <= 1'b1;
+        if ((id_Branch && ex_RegWrite)||stall_mem||stall_dram||mem_crash) stall_if_id <= 1'b1;
         else stall_if_id <= 1'b0;
-        if (stall_mem||stall_dram) stall_id_ex <= 1'b1;
+        if (stall_mem||stall_dram||mem_crash) stall_id_ex <= 1'b1;
         else stall_id_ex <= 1'b0;
-        if (stall_mem||stall_dram) stall_ex_memwb <= 1'b1;
+        if (stall_mem||stall_dram||mem_crash) stall_ex_memwb <= 1'b1;
         else stall_ex_memwb <= 1'b0;
         flush_id_ex <= 1'b0;
         flush_ex_memwb <= 1'b0;
-        /*
-
-        if(stall_mem) begin 
-            stall_pc <= 1'b1;
-            stall_if_id <= 1'b1;
-            stall_id_ex <= 1'b1;
-            stall_ex_memwb <= 1'b1;
-        end
-        else
-       
-        if(id_Branch && ex_RegWrite) begin        //暂停流水线一个周期
-            stall_pc <= 1'b1;
-            stall_if_id <= 1'b1;
-            //flush_id_ex <= 1'b1;
-        end 
-        else begin
-            stall_pc <= 1'b0;
-            stall_if_id <= 1'b0;
-            stall_id_ex <= 1'b0;
-            stall_ex_memwb <= 1'b0;
-        end*/
     end
 end 
 
@@ -94,10 +59,5 @@ always @(*) begin         //延迟槽相关代码
     end
 end*/
 
-/*        
-always @(*) begin 
-    if (jmp_reg) stall_id_ex <= 1'b1;
-    else stall_id_ex <= 1'b0;
-end*/
 
 endmodule 

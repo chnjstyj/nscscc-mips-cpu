@@ -29,13 +29,6 @@ always @(posedge wr_clk or posedge wr_rst) begin
         t_uart_write_ce <= 1'b0;
     end
 end
-/*
-always @(posedge rd_clk) begin 
-    if (rd_rst == 1'b0) begin 
-        rd_uart_write_ce <= t_uart_write_ce;
-        rd_uart_wdata <= t_uart_wdata;
-    end
-end*/
 
 assign rd_uart_write_ce = t_uart_write_ce;
 assign rd_clean_recv_flag = t_clean_recv_flag;

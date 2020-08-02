@@ -58,10 +58,12 @@ assign base_ram_be_n = 4'b0000;
 assign ext_ram_be_n = 4'b0000;
 
 // PLL分频示例
-wire locked, clk_98M, clk_500M,clk_top;
+wire locked, clk_98M, clk_500M;
+reg clk_top;
 reg clk_uart;
 integer i;
-        
+reg [3:0] k;
+
 pll_example clock_gen 
  (
   // Clock in ports
@@ -69,8 +71,6 @@ pll_example clock_gen
   // Clock out ports
   .clk_out1(clk_98M), // 时钟输出1，频率在IP配置界面中设置
   .clk_out2(clk_500M), // 时钟输出2，频率在IP配置界面中设置
-  .clk_out3(clk_top),
- // .clk_out4(clk_100M),
   // Status and control signals
   .reset(reset_btn), // PLL复位输入
   .locked(locked)    // PLL锁定指示输出，"1"表示时钟稳定，
@@ -89,20 +89,50 @@ always@(posedge clk_500M or negedge locked) begin
     if(~locked) reset_of_clk500M <= 1'b1;
     else        reset_of_clk500M <= 1'b0;
 end
-always@(posedge clk_top or negedge locked) begin
+
+always@(posedge clk_500M or negedge locked) begin
     if(~locked) reset_of_clktop <= 1'b1;
     else        reset_of_clktop <= 1'b0;
 end
 /*
-always@(posedge clk_98M or posedge reset_of_clk98M) begin
-    if(reset_of_clk98M)begin
-        // Your Code
+always @(posedge clk_500M) begin 
+    if (reset_of_clk500M) begin 
+        k <= 0;
+        clk_top <= 1'b0;
     end
     else begin
-        // Your Code
+         if (k < 4'd4) begin
+            k <= k + 4'd1;
+        end
+        else begin 
+            clk_top <= ~clk_top;
+            k <= 4'd0;
+        end
+    end
+end*/
+
+
+always @(posedge clk_500M or posedge reset_of_clk500M) begin 
+    if (reset_of_clk500M) begin 
+        k <= 0;
+        clk_top <= 1'b0;
+    end
+    else begin
+     if (k < 4'd5) begin
+        clk_top <= 1'b0;
+        k <= k + 4'd1;
+    end
+    else if (k < 4'd9) begin 
+        clk_top <= 1'b1;
+        k <= k + 4'd1;
+    end
+    else begin 
+        clk_top <= 1'b1;
+        k <= 4'd0;
+    end
     end
 end
-*/
+
 always @(posedge clk_98M) begin
     if (reset_of_clk98M) begin 
         i <= 0;
@@ -118,7 +148,8 @@ end
     wire ce;
     
     wire [31:0] ram_rdata;
-    wire [31:0] dram_addr;
+    wire [31:0] dram_write_addr;
+    wire [31:0] dram_read_addr;
     wire dwrite_ce;
     wire [31:0] wdata;
     wire dread_ce;
@@ -139,8 +170,17 @@ end
     wire [7:0] uart_rdata;    //串口读出数据
     reg recv_flag;           //接收标志位  1:串口收到数据
     reg send_flag;           //发送标志位  1:串口空闲
+    reg t_recv_flag;
+    reg t_send_flag;
+    reg rd_recv_flag;
+    reg rd_send_flag;
+     
+    wire rd_uart_write_ce;
+    wire [7:0] rd_uart_wdata;
+    wire rd_clean_recv_flag;
+    wire [7:0] rd_uart_rdata;
     
-        
+    
     wire [31:0] base_rdata;
     wire [31:0] ext_rdata;
     wire [31:0] base_wdata;
@@ -152,10 +192,7 @@ end
     wire [19:0] base_addr;
     wire [19:0] ext_addr;
     wire stall_mem;
-
-    wire rd_uart_write_ce;
-    wire [7:0] rd_uart_wdata;
- 
+    
     wire rd_base_read_ce;
     wire rd_base_write_ce;
     wire rd_ext_read_ce;
@@ -164,34 +201,83 @@ end
     wire [19:0] rd_ext_addr;
     wire [31:0] rd_base_wdata;
     wire [31:0] rd_ext_wdata;
-
-        
+    
+    wire [31:0] rd_base_rdata;
+    wire [31:0] rd_ext_rdata;
+    
+    wire base_fin;
+    wire ext_fin;
+    
     wire [31:0] base_ram_wdata;
     wire [31:0] base_ram_rdata;
     assign base_ram_data = (base_write_ce == 1'b1)? base_ram_wdata:32'hzzzzzzzz;
     assign base_ram_rdata = base_ram_data;
-
+            
     wire [31:0] ext_ram_wdata;
     wire [31:0] ext_ram_rdata;
     assign ext_ram_data = (ext_write_ce == 1'b1)?ext_ram_wdata:32'hzzzzzzz;
     assign ext_ram_rdata = ext_ram_data;
+    
+    wire uart_txd;
+    
+    wire uart_write_flag;
+    //wire uart_read_flag;
+    
+    
+    
+assign uart_read_ce = (reset_of_clk98M == 1'b1)?1'b0:1'b1;
+/*
+reg t_recv_flag;
+always @(posedge clk_98M) t_recv_flag <= recv_flag;*/
+/*
+always @(posedge clk_98M or posedge reset_of_clk98M) begin
+    if (reset_of_clk98M)
+        t_recv_flag <= 1'b0;
+    else
+        t_recv_flag <= recv_flag;
+end*/
 
-    wire [31:0] rd_base_rdata;
-    wire [31:0] rd_ext_rdata;
+reg uart_read_flag;
 
-    wire [7:0] rd_uart_rdata;
+always @(posedge clk_top or posedge reset_of_clk500M) begin 
+    if (reset_of_clk500M) uart_read_flag <= 1'b0;
+    else if (clean_recv_flag) uart_read_flag <= 1'b1;
+    else if (uart_read_fin == 1'b0) uart_read_flag <= 1'b0;
+end
 
-    wire base_fin;
-    wire ext_fin;
+    always @(*) begin
+            if (uart_read_fin == 1'b1 && !uart_read_flag) recv_flag <= 1'b1;
+            else if (uart_read_flag) recv_flag <= 1'b0;
+            else recv_flag <= 1'b0;
+    end
+    
+    
+//assign recv_flag = (uart_read_fin)?((uart_read_flag)?1'b0:1'b1):1'b0;
 
+/*
+reg t_send_flag;
+always @(posedge clk_98M) t_send_flag <= send_flag;*/
+
+always @(*) begin 
+        if (uart_write_fin) begin 
+            if (uart_write_flag) send_flag <= 1'b0;            
+            else send_flag <= 1'b1;
+        end
+        else send_flag <= 1'b0;
+end
+
+//assign send_flag = (uart_write_fin)?((uart_write_flag)?1'b0:1'b1):1'b0;
+
+assign txd = uart_txd;
 
     top top(
         .clk(clk_top),
         .rst(reset_of_clktop),
         .ce(ce),
-        .stall_mem(1'b0),
+        .stall_mem(stall_mem),
         .ram_rdata(ram_rdata),
-        .dram_addr(dram_addr),
+        .dram_write_addr(dram_write_addr),
+        .dram_read_addr(dram_read_addr),
         .dwrite_ce(dwrite_ce),
         .wdata(wdata),
         .dread_ce(dread_ce),
@@ -207,66 +293,64 @@ end
         .send_flag(send_flag)
     );
 
-assign uart_read_ce = (reset_of_clk98M == 1'b1)?1'b0:1'b1;
-always @(*) begin
-    if (uart_read_fin == 1'b1)
-        recv_flag <= 1'b1;
-    else if (clean_recv_flag)
-        recv_flag <= 1'b0;
-    else recv_flag <= 1'b0;
-end
-always @(*) begin 
-    if (reset_of_clk98M) send_flag <= 1'b1;
-    else if(uart_write_fin) send_flag <= 1'b1;
-    else send_flag <= 1'b0;
-end
-
 uart_asyn_ram uart_asyn_ram(
     .wr_clk(clk_top),
     .wr_rst(reset_of_clktop),
     .wr_uart_write_ce(uart_write_ce),
+    .wr_clean_recv_flag(clean_recv_flag),
     .wr_uart_wdata(uart_wdata),
     .rd_clk(clk_uart),
     .rd_rst(reset_of_clk98M),
     .rd_uart_write_ce(rd_uart_write_ce),
+    .rd_clean_recv_flag(rd_clean_recv_flag),
     .rd_uart_wdata(rd_uart_wdata)
     );
+
 
 uart_read_asyn_ram uart_read_asyn_ram(
     .wr_clk(clk_uart),
     .wr_rst(reset_of_clk98M),
     .wr_uart_rdata(uart_rdata),
     .rd_clk(clk_top),
-    .rd_rst(reset_of_clktop),
+    .rd_rst(reset_of_clk500M),
     .rd_uart_rdata(rd_uart_rdata)
     );
         
 uart_read uart_read(
     .clk(clk_uart),
+    .clk_98M(clk_98M),
+    //.clk_top(clk_top),
     .rst(reset_of_clk98M),
+    //.rst_top(reset_of_clk500M),
     .read_ce(uart_read_ce),             //
     .din(rxd),
+    //.clean_recv_flag(clean_recv_flag),
     .rfin(uart_read_fin),
+    //.flag(uart_read_flag),
     .dout(uart_rdata)
 );
 
 uart_write uart_write(
     .clk(clk_uart),
+    .clk_top(clk_top),
     .rst(reset_of_clk98M),
-    .write_ce(uart_write_ce),                         //写使能
-    .din(uart_wdata),                              //来自mem
+    .rst_top(reset_of_clktop),
+    .write_ce(rd_uart_write_ce),                         //写使能
+    .din(rd_uart_wdata),                              //来自mem
     .wfin(uart_write_fin),
-    .dout(txd)
+    .flag(uart_write_flag),
+    .dout(uart_txd)
 );
 
 memory_manager memory_manager(
 .clk(clk_top),
-.rst(!ce),
+.rst(reset_of_clktop),
 .stall_mem(stall_mem),
-.dram_addr(dram_addr),
+.dram_write_addr(dram_write_addr),
+.dram_read_addr(dram_read_addr),
 .iram_addr(iram_addr),
-.base_rdata(rd_base_rdata),
-.ext_rdata(rd_ext_rdata),
+.base_rdata(base_rdata),
+.ext_rdata(ext_rdata),
 .dram_wdata(wdata),
 .dwrite_ce(dwrite_ce),
 .dread_ce(dread_ce),
@@ -283,54 +367,13 @@ memory_manager memory_manager(
 .ext_addr(ext_addr)
 );
 
-sram_asyn_ram u_sram_asyn_ram(
-    .wr_clk(clk_top),
-    .wr_rst(reset_of_clktop),
-    
-    .wr_base_read_ce(base_read_ce),
-    .wr_base_write_ce(base_write_ce),
-    .wr_ext_read_ce(ext_read_ce),
-    .wr_ext_write_ce(ext_write_ce),
-    .wr_addr_wdata_ce({base_addr,ext_addr,base_wdata,ext_wdata}),
-    /*
-    .wr_base_addr(base_addr),
-    .wr_ext_addr(ext_addr),
-    .wr_base_wdata(base_wdata),
-    .wr_ext_wdata(ext_wdata),*/
-    .rd_clk(clk_500M),
-    .rd_rst(reset_of_clk500M),
-    
-    .rd_base_read_ce(rd_base_read_ce),
-    .rd_base_write_ce(rd_base_write_ce),
-    .rd_ext_read_ce(rd_ext_read_ce),
-    .rd_ext_write_ce(rd_ext_write_ce),
-    .rd_addr_wdata_ce({rd_base_addr,rd_ext_addr,rd_base_wdata,rd_ext_wdata})
-    /*
-    .rd_base_addr(rd_base_addr),
-    .rd_ext_addr(rd_ext_addr),
-    .rd_base_wdata(rd_base_wdata),
-    .rd_ext_wdata(rd_ext_wdata)*/
-    );
-
-
-sram_read_asyn_ram sram_read_asyn_ram(
-    .wr_clk(clk_500M),
-    .wr_rst(reset_of_clk500M),
-    .wr_base_rdata(base_rdata),
-    .wr_ext_rdata(ext_rdata),
-    .rd_clk(clk_top),
-    .rd_rst(reset_of_clktop),
-    .rd_base_rdata(rd_base_rdata),
-    .rd_ext_rdata(rd_ext_rdata)
-    );
-
 ram_rw base_ram(
 .clk(clk_500M),
 .rst(reset_of_clk500M),
-.read_ce(rd_base_read_ce),
-.write_ce(rd_base_write_ce),
-.write_data(rd_base_wdata),
-.addr(rd_base_addr),
+.read_ce(base_read_ce),
+.write_ce(base_write_ce),
+.write_data(base_wdata),
+.addr(base_addr),
 .fin(base_fin),
 .rom_rdata(base_ram_rdata),
 .rom_wdata(base_ram_wdata),
@@ -344,10 +387,10 @@ ram_rw base_ram(
 ram_rw ext_ram(
 .clk(clk_500M),
 .rst(reset_of_clk500M),
-.read_ce(rd_ext_read_ce),
-.write_ce(rd_ext_write_ce),
-.write_data(rd_ext_wdata),
-.addr(rd_ext_addr),
+.read_ce(ext_read_ce),
+.write_ce(ext_write_ce),
+.write_data(ext_wdata),
+.addr(ext_addr),
 .rom_rdata(ext_ram_rdata),
 .rom_wdata(ext_ram_wdata),
 .rom_addr(ext_ram_addr),
@@ -356,5 +399,11 @@ ram_rw ext_ram(
 .oe(ext_ram_oe_n),
 .read_data(ext_rdata)
 );
+/*
+ila_0 u_ila_0(
+.clk(clk_50M),
+.probe0(base_addr),
+.probe1(base_ram_rdata)
+);*/
 
 endmodule

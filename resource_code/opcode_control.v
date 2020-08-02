@@ -23,8 +23,6 @@ always @(*) begin
     else 
         {equal_branch,Jump,RegDst,ALUSrc,MemtoReg,RegWrite,MemRead,MemWrite,Branch,ALUOp} <= control_sig;
 end
-/*assign {equal_branch,Jump,RegDst,ALUSrc,MemtoReg,RegWrite,MemRead,MemWrite,Branch,ALUOp} 
-    = control_sig;*/
 
 always @(*) begin
    case (opcode)
@@ -49,7 +47,7 @@ always @(*) begin
        6'h7: control_sig <= 13'b1101000010001;            //bgtz
        6'he: control_sig <= 13'b1111010000110;            //xori
        6'h20: control_sig <= 13'b1101111000000;            //lb
-       //6'h28: control_sig <= 13'b1100000010110;            //sb
+       6'h1c:control_sig <= 13'b1110010001001;             //mul
        default: control_sig <= 13'b1100000000000;
    endcase 
 end

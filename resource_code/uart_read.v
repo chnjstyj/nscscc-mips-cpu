@@ -1,10 +1,11 @@
 module uart_read(
     input wire clk,          //9600bps
+    input wire clk_98M,
     input wire rst,
     input wire read_ce,
     input wire din,
     output reg rfin,        //读完成信号
-    output reg [7:0] dout
+    output wire [7:0] dout
 );
 
 localparam s0 = 2'b00;      //等待
@@ -18,7 +19,7 @@ reg state_fin;
 reg [3:0] i;
 reg [7:0] t_data;
 
-//assign dout = t_data;
+assign dout = t_data;
 
 always @(posedge clk or posedge rst) begin 
     if(rst)
@@ -52,28 +53,21 @@ end
 always @(posedge clk or posedge rst) begin 
     if(rst) begin 
         state_fin <= 1'b0;
-        rfin <= 1'b0;
-        dout <= 8'h00;
         i <= 4'h0;
         t_data <= 8'h00;
     end 
     else begin 
         case(next_state)
             s0:begin 
-                //dout <= 8'h00;
-                rfin <= 1'b0;
-                t_data <= 8'h00;
+                state_fin <= 1'b0;
             end 
             s1:begin 
-                //rfin <= 1'b0;
                 if(din == 1'b0) begin
                     state_fin <= 1'b1;
                     i <= 4'h0;
-                    rfin <= 1'b0;
                 end
                 else begin
                     state_fin <= 1'b0;
-                    rfin <= 1'b0;
                 end
             end 
             s2:begin
@@ -91,13 +85,24 @@ always @(posedge clk or posedge rst) begin
                 if(din != 1'b1) state_fin <= 1'b0;
                 else begin
                     state_fin <= 1'b1;
-                    rfin <= 1'b1;
-                    dout <= t_data;
                 end
             end 
+            default:begin 
+                t_data <= 8'h00;
+                state_fin <= 1'b0;
+            end
         endcase
     end
 end
 
+always @(posedge clk_98M or posedge rst) begin 
+    if (rst) begin 
+        rfin <= 1'b0;
+    end
+    else begin 
+        if (cur_state == s3) rfin <= 1'b1;
+        else if (cur_state == s2) rfin <= 1'b0;
+    end
+end
 
 endmodule 

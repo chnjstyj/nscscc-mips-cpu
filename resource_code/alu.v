@@ -4,13 +4,8 @@ module alu(
     input [15:0] imme,
     input ALUSrc,
     input [3:0] alu_control,
-    //input unsigned_num,
-    //input equal_branch,
     input [4:0] shamt,
-    //input greater_than,
-    //output reg zero_sig
-    output reg [31:0] alu_result
-    //output reg bgtz_sig                       //bgtz –≈∫≈œﬂ
+    output reg [31:0] alu_result                     
 );
 
 wire [31:0] zero_extimm;
@@ -30,6 +25,7 @@ wire [31:0] lessthan_result;
 wire [31:0] xor_result;
 wire [31:0] sll_result;
 wire [31:0] srl_result;
+wire [31:0] mul_result;
 
 assign add_result = data_a + real_data_b;
 assign sub_result = data_a - real_data_b;
@@ -38,8 +34,13 @@ assign or_result = data_a | real_data_b;
 assign lessthan_result = (data_a < real_data_b?32'b1:32'b0);
 assign xor_result = data_a ^ real_data_b;
 assign sll_result = real_data_b << shamt;
-assign srl_result = real_data_b >>> shamt;
+assign srl_result = real_data_b >> shamt;
 
+mul u_mul(
+.A(data_a),
+.B(real_data_b),
+.P(mul_result)
+);
 
 always @(*) begin
     case (alu_control)
@@ -51,6 +52,7 @@ always @(*) begin
         4'b1100:alu_result <= xor_result;        //xor
         4'b1101:alu_result <= sll_result;
         4'b1110:alu_result <= srl_result;
+        4'b1111:alu_result <= mul_result;
         default:alu_result <= 32'h00000000;
     endcase
 end
@@ -61,27 +63,6 @@ always @(*) begin
     end
     else real_imme <= sign_extimm;
 end
-assign real_data_b = (ALUSrc == 1'b1)?real_imme:data_b;                  
-
-/*always @(*) begin
-    if(equal_branch) begin  
-        if(alu_result == 32'h00000000)
-            zero_sig <= 1'b1;
-        else
-            zero_sig <= 1'b0;
-    end
-    else begin
-        if(alu_result == 32'h00000000)
-            zero_sig <= 1'b0;
-        else
-            zero_sig <= 1'b1;
-    end 
-end*/
-
-/*always @(*) begin 
-    if (greater_than && alu_result[31] != 1'b1)
-        bgtz_sig <= 1'b1;
-    else bgtz_sig <= 1'b0;
-end*/
+assign real_data_b = (ALUSrc == 1'b1)?real_imme:data_b;
 
 endmodule

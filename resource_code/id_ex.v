@@ -3,7 +3,6 @@
     input rst,
     input flush_id_ex,
     input stall_id_ex,
-    //input id_Branch,
     input wire id_MemRead,
     input wire id_MemtoReg,
     input wire [3:0] id_ALUOp,
@@ -25,11 +24,6 @@
     input wire [4:0] id_Rs,
     input wire [4:0] id_Rt,
     input wire id_greater_than,
-    //input wire id_Ebranch,
-    //input wire [31:0] id_jc_instaddress,
-    //output reg [31:0] ex_jc_instaddress,
-    //output reg ex_Ebranch,
-    //output reg ex_Branch,
     output reg ex_MemRead,
     output reg ex_MemtoReg,
     output reg [3:0] ex_ALUOp,
@@ -55,7 +49,6 @@
 
 always @(posedge clk or posedge rst) begin 
         if(rst == 1'b1) begin 
-            //ex_Branch <= 1'b0;
             ex_MemRead <= 1'b0;
             ex_MemtoReg <= 1'b0;
             ex_ALUOp <= 4'b0000;
@@ -77,8 +70,6 @@ always @(posedge clk or posedge rst) begin
             ex_Rs <= 5'b00000;
             ex_Rt <= 5'b00000;
             ex_greater_than <= 1'b0;
-            //ex_Ebranch <= 1'b0;
-            //ex_jc_instaddress <= 32'h80000000;
         end 
         else if (stall_id_ex == 1'b0) begin 
             if(flush_id_ex == 1'b1) begin 
@@ -106,7 +97,6 @@ always @(posedge clk or posedge rst) begin
                 ex_greater_than <= 1'b0;
             end
             else begin 
-            //ex_Branch <= id_Branch;
                 ex_MemRead <= id_MemRead;
                 ex_MemtoReg <= id_MemtoReg;
                 ex_ALUOp <= id_ALUOp;
@@ -128,8 +118,6 @@ always @(posedge clk or posedge rst) begin
                 ex_Rs <= id_Rs;
                 ex_Rt <= id_Rt;
                 ex_greater_than <= id_greater_than;
-                //ex_Ebranch <= id_Ebranch;
-                //ex_jc_instaddress <= id_jc_instaddress;
             end
         end 
 end

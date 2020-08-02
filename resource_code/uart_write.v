@@ -6,6 +6,7 @@ module uart_write(
     input wire write_ce,
     input wire [7:0] din,
     output reg wfin,        //¶ÁÍê³ÉĞÅºÅ
+    output reg flag,
     output reg dout
 );
 
@@ -18,7 +19,6 @@ reg [1:0] cur_state;
 reg [1:0] next_state;
 reg state_fin;
 reg [2:0] i;
-reg flag;
 
 wire [7:0] data;
 
@@ -42,12 +42,10 @@ always @(*) begin
                 else next_state <=s1;
             end 
             s2:begin 
-                if(state_fin /*&& i == 3'd7*/) next_state <= s3;
+                if(state_fin) next_state <= s3;
                 else next_state <= s2;
             end 
             s3:begin 
-                //if(state_fin && (/*write_ce||*/flag)) next_state <= s1;
-                //else if(state_fin && !write_ce && !flag) next_state <= s0;
                 if (state_fin) next_state <= s0;
                 else next_state <= s3;
             end
@@ -58,7 +56,6 @@ end
 always @(posedge clk or posedge rst) begin 
     if(rst) begin 
         state_fin <= 1'b0;
-        //wfin <= 1'b0;
         dout <= 1'b1;
         i <= 3'b0;
     end 
@@ -87,7 +84,6 @@ always @(posedge clk or posedge rst) begin
             end 
             s3:begin 
                 dout <= 1'b1;
-                //wfin <= 1'b1;
                 state_fin <= 1'b1;
             end 
         endcase
@@ -100,14 +96,10 @@ always @(posedge clk_top or posedge rst_top) begin
         flag <= 1'b0;
     end
     else begin
-        if (write_ce == 1'b1) begin 
-            wfin <= 1'b0;
-            flag <= 1'b1;
-        end
-        else if (next_state == s0 && !flag) begin 
-            wfin <= 1'b1;
-        end
-        else if (next_state == s2) flag <= 1'b0;
+        if (write_ce) flag <= 1'b1;
+        else if (cur_state == s2) flag <= 1'b0;
+        if (cur_state == s0) wfin <= 1'b1;
+        else wfin <= 1'b0;
     end
 end
 
