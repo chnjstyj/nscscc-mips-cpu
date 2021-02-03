@@ -12,6 +12,7 @@ resource_code/.VSCodeCounter/results.csv
 /doc/*
 !/doc/*.pdf
 /uart/*
+/project/*
 
 =======
 
